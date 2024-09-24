@@ -1,0 +1,38 @@
+/* #root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    user-select: none;
+  } */
+   /* src/css/App.css */
+
+/* Example global styles */
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  border-radius: 4px;
+}
+
+input {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+}
+
+label {
+  font-weight: bold;
+}

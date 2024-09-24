@@ -1,0 +1,41 @@
+.input-wrapper {
+    background-color: #ffffff; /* White background */
+    width: 50%;
+    border-radius: 10px; /* Rounded corners */
+    height: 2.5rem; /* Fixed height */
+    padding: 0 15px; /* Padding inside the wrapper */
+    box-shadow: 0px 4px 8px #0000001a; /* Subtle shadow */
+    display: flex;
+    align-items: center; /* Center items vertically */
+    border: 1px solid #ddd; /* Light border for better definition */
+}
+
+input {
+    background-color: transparent; /* Transparent background */
+    border: none; /* No border */
+    height: 100%; /* Full height */
+    font-size: 1.25rem; /* Larger font size */
+    width: 100%; /* Full width */
+    margin-left: 5px; /* Space between icon and text */
+    color: #333; /* Dark text color */
+}
+
+input:focus {
+    outline: none; /* Remove default focus outline */
+}
+
+#search-icon {
+    color: royalblue; /* Icon color */
+    font-size: 1.5rem; /* Larger icon size */
+    display: flex;
+    align-items: center; /* Center icon vertically */
+}
+
+.input-wrapper:hover {
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+    border-color: royalblue; /* Border color change on hover */
+}
+
+.input-wrapper input::placeholder {
+    color: #aaa; /* Light gray placeholder text */
+}

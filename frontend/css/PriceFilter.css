@@ -1,0 +1,40 @@
+.price-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .price-input {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  
+  .price-input label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .price-input input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    font-size: 16px;
+    margin-bottom: 10px;
+    outline: none;
+    transition: border-color 0.3s;
+    width: 200px;
+  }
+  
+  .price-input input:focus {
+    border-color: #007bff;
+  }
+  

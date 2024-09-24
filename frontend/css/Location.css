@@ -1,0 +1,15 @@
+#locationinput
+{
+    color:yellow;
+    text-align: left;
+    width: 100%;
+    border-radius: 10px;
+}
+#locationName{
+    display: flex;
+    flex-direction: column;
+    padding:10px;
+    width: 100%;
+    font-size:15px;
+    border-radius: 10px;
+}

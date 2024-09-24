@@ -1,0 +1,132 @@
+/*  */
+
+#productForm {
+    width: 350px; /* Adjusted for a neat layout */
+    margin: 50px auto; /* Centered with vertical spacing */
+    padding: 20px;
+    border: none; /* Removed border for a cleaner look */
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
+    backdrop-filter: blur(10px); /* Frosted glass effect */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow for more contrast */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transformation */
+    animation: fadeIn 0.5s; /* Fade-in effect */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#productForm:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); /* Increase shadow on hover */
+}
+
+#productForm label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: 600; /* Increased weight for better visibility */
+    color: #333;
+    transition: color 0.3s; /* Smooth color transition */
+}
+
+#productForm label:hover {
+    color: #4CAF50; /* Change color on hover */
+}
+
+#productForm select {
+    padding: 10px; /* Comfortable padding */
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0; /* Light background */
+    font-size: 14px;
+    transition: border-color 0.3s, background-color 0.3s; /* Smooth transitions */
+}
+
+#productForm select:focus {
+    border-color: #4CAF50; /* Highlight border on focus */
+    background-color: #e0ffe0; /* Light green background on focus */
+}
+
+#productForm input[type="date"],
+#productForm input[type="number"],
+#productForm input[type="file"] {
+    padding: 10px; /* Comfortable padding */
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0; /* Light background */
+    font-size: 14px;
+    transition: border-color 0.3s, background-color 0.3s; /* Smooth transitions */
+    max-width: 100%; /* Ensures max width does not exceed parent container */
+    box-sizing: border-box; /* Includes padding and border in the element's total width */
+}
+
+#productForm input[type="date"]:focus,
+#productForm input[type="number"]:focus,
+#productForm input[type="file"]:focus {
+    border-color: #4CAF50; /* Highlight border on focus */
+    background-color: #e0ffe0; /* Light green background on focus */
+}
+
+#productForm button[type="submit"] {
+    width: 100%; /* Full width for the button */
+    padding: 12px;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s; /* Transition for button */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Button shadow */
+}
+
+#productForm button[type="submit"]:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Shadow on hover */
+}
+
+@media (max-width: 500px) {
+    #productForm {
+        width: 90%;
+        padding: 15px;
+    }
+    #productForm label {
+        font-size: 14px;
+    }
+    #productForm select,
+    #productForm input[type="date"],
+    #productForm input[type="number"],
+    #productForm input[type="file"] {
+        font-size: 12px;
+        padding: 8px; /* Adjusted for smaller screens */
+        max-width: calc(100% - 16px); /* Adjusts width accounting for padding */
+    }
+    #productForm button[type="submit"] {
+        font-size: 14px;
+    }
+}
+
+.message {
+    margin-top: 10px;
+    font-size: 14px;
+    transition: opacity 0.3s; /* Smooth opacity transition */
+}
+
+.error-message {
+    color: red;
+}
+
+.success-message {
+    color: green;
+}
+
+.message.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out; /* Fade-out effect */
+}

@@ -1,0 +1,70 @@
+.product-page {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between; /* Ensure details are on the left, carousel on the right */
+    align-items: flex-start; /* Align items at the top */
+  }
+  
+  .product-page-container {
+    display: flex;
+    justify-content: center; /* Centers items horizontally */
+    align-items: center; /* Centers items vertically */
+    gap: 20px; /* Space between content and images */
+    flex-wrap: wrap; /* Allows wrapping if the screen is too narrow */
+  }
+  
+  .content,
+  .images {
+    flex: 1;
+    min-width: 300px; /* Ensures a minimum width for responsiveness */
+  }
+  
+  .images {
+    max-width: 600px; /* Increased max-width for larger images */
+  }
+  
+  .product-page .content {
+    display: flex;
+    flex-direction: column; /* Arrange content vertically */
+    font-size: 1.2rem; /* Increased font size for better readability */
+    line-height: 1.6; /* Increased line spacing for better readability */
+  }
+  
+  .product-page .images {
+    display: flex;
+    justify-content: center; /* Center carousel horizontally */
+    max-height: 600px; /* Limit image height for consistent look */
+  }
+  
+  .product-page .content h1 {
+    font-size: 2rem; /* Larger font size for headings */
+  }
+  
+  .product-page .content p {
+    font-size: 1.2rem; /* Larger font size for paragraphs */
+  }
+  
+  .product-page .images img {
+    width: 100%; /* Ensures images fill the container */
+    height: auto; /* Maintains aspect ratio */
+    max-height: 100%; /* Limits image height to container's height */
+  }
+  
+  .book-button {
+    padding: 8px 16px; /* Smaller button */
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem; /* Slightly smaller font size */
+    margin-top: 10px;
+    width: fit-content; /* Adjust button width to fit the content */
+    transition: background-color 0.3s;
+  }
+  
+  .book-button:hover {
+    background-color: #0056b3;
+  }

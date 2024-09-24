@@ -1,0 +1,261 @@
+/* Ensure full height and remove default margins and padding */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+/* Ensure the container takes up full height and width */
+.home-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+}
+
+/* Header styling */
+.header {
+    background-color: #002D72;
+    color: white;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header .logo h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.navbar {
+    background-color: #004B87;
+}
+
+.navbar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar li {
+    margin: 0 1rem;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    display: inline-block;
+}
+
+.navbar a:hover {
+    background-color: #0066CC;
+    border-radius: 5px;
+}
+
+/* Main content styling */
+.main-content {
+    flex: 1;
+    background-color: #F5F5F5;
+    padding: 2rem;
+}
+
+/* Hero section styling */
+.hero {
+    background: url('https://via.placeholder.com/1500x500') center center/cover no-repeat;
+    padding: 4rem 1rem;
+    color: white;
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.hero-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hero h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+}
+
+.search-form input {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px 0 0 5px;
+    font-size: 1rem;
+    width: 300px;
+}
+
+.search-form button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background-color: #004B87;
+    color: white;
+    font-size: 1rem;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+.search-form button:hover {
+    background-color: #0066CC;
+}
+
+/* Featured Listings */
+.featured-listings {
+    padding: 2rem 0;
+    text-align: center;
+}
+
+.featured-listings h2 {
+    margin-bottom: 2rem;
+}
+
+.listing-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    width: 300px;
+    display: inline-block;
+    margin: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    vertical-align: top;
+}
+
+.listing-card img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.listing-card h3 {
+    margin: 1rem 0 0.5rem;
+}
+
+.listing-card p {
+    font-size: 1.1rem;
+    margin: 0 0 1rem;
+}
+
+.btn-primary {
+    background-color: #002D72;
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.btn-primary:hover {
+    background-color: #004B87;
+}
+
+/* Testimonials */
+.testimonials {
+    background-color: #E8F0F2;
+    padding: 2rem;
+    text-align: center;
+}
+
+.testimonials h2 {
+    margin-bottom: 2rem;
+}
+
+.testimonial-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem auto;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-card p {
+    font-size: 1rem;
+    margin: 0 0 0.5rem;
+}
+
+.testimonial-card h4 {
+    font-size: 1.1rem;
+    color: #002D72;
+}
+
+/* Footer styling */
+.footer {
+    background-color: #004B87;
+    color: white;
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-logo h1 {
+    margin: 0;
+}
+
+.footer-links {
+    margin: 1rem 0;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.footer-links li {
+    margin: 0 1rem;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-contact p {
+    margin: 0.5rem 0;
+}
+
+.footer-social {
+    margin-top: 1rem;
+}
+
+.footer-social .social-icon {
+    color: white;
+    text-decoration: none;
+    margin: 0 0.5rem;
+    font-size: 1.5rem;
+}
+
+.footer-social .social-icon:hover {
+    color: #0066CC;
+}

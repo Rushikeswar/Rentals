@@ -1,0 +1,67 @@
+.dashboard-container {
+    display: flex;
+    height: 100vh; /* Full height of the viewport */
+}
+
+.dashboard-menu {
+    width: 250px; /* Fixed width for the menu */
+    background-color: #f4f4f4; /* Background color for menu */
+    padding: 20px; /* Padding around the menu */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    
+}
+
+.dashboard-menu h2 {
+    font-size: 1.5rem; /* Heading size */
+    margin-bottom: 20px; /* Space below heading */
+}
+
+.dashboard-menu ul {
+    list-style-type: none; /* No bullet points */
+    padding: 0; /* Remove padding */
+}
+
+.dashboard-menu li {
+    margin-bottom: 15px; /* Space between options */
+}
+
+.dashboard-menu li a {
+    text-decoration: none; /* Remove underline from links */
+    color: #333; /* Link color */
+    font-weight: bold; /* Bold text */
+    transition: color 0.3s; /* Smooth color transition */
+}
+
+.dashboard-menu li a:hover {
+    color: #007bff; /* Change color on hover */
+}
+
+.dashboard-content {
+    flex-grow: 1; /* Allow content to take remaining space */
+    padding: 20px; /* Padding for content */
+    background-color: #ffffff; /* Background color for content */
+}
+
+.select-component {
+    margin-top: 20px; /* Space above select component */
+}
+
+.select-component label {
+    display: block; /* Block display for labels */
+    margin-bottom: 10px; /* Space below labels */
+    font-weight: bold; /* Bold text for labels */
+}
+
+.select-component select {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding inside the select */
+    border: 1px solid #ccc; /* Border styling */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 1rem; /* Font size */
+    transition: border-color 0.3s; /* Smooth border transition */
+}
+
+.select-component select:focus {
+    border-color: #007bff; /* Border color on focus */
+    outline: none; /* Remove outline */
+}

@@ -1,0 +1,40 @@
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-around;
+    align-items: flex-start; /* Align items to the top */
+    padding: 20px;
+    max-height: calc(100vh - 40px); /* Adjust the height to prevent overflow */
+    overflow-y: auto; /* Add vertical scroll if needed */
+    box-sizing: border-box;
+}
+
+.product-list::-webkit-scrollbar {
+    width: 0px;
+    
+}
+
+.product-list::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+.product-list::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+.item-card {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    flex: 0 1 300px;
+    max-width:100%;
+    box-sizing: border-box;
+
+}
+.item-card img{
+    border-radius:15%;
+    aspect-ratio:1;
+}

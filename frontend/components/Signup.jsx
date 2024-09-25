@@ -16,6 +16,21 @@ const SignupForm = () => {
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [dateofbirth, setdateofbirth] = useState('');
   const [passwordStrength, setPasswordStrength] = useState('');
+
+
+  function validateUsername(username) {
+    // Regular expression to match the criteria
+    const regex = /^[a-z]{5,}$/;
+    
+    // Test the username against the regex
+    if (regex.test(username)) {
+        return true; // Valid username
+    } else {
+        return false; // Invalid username
+    }
+}
+
+
   useEffect(() => {
     if (!isFocused && email !== '') {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,7 +81,14 @@ const SignupForm = () => {
     e.preventDefault();
     setMessage("");
     setError(false);
-  
+    
+    if(!validateUsername(username))
+    {
+      setError(true);
+      setMessage("username must be 5 letters of lowercase letters !")
+    }
+
+
     if (!validPassword(password)) {
       setError(true);
       // setMessage("Password must be 8 characters with upper, lower, digit, and special character.");

@@ -1,0 +1,59 @@
+.chart-section-2 {
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.chart-container {
+    width: 45%;
+    background-color: #f1ebfd;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.chart-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.left, .right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 768px) {
+    .chart-section-2 {
+        flex-direction: column;
+    }
+
+    .chart-container {
+        width: 100%;
+    }
+}
+
+.location {
+    writing-mode: vertical-rl; /* Makes the text vertical */
+    text-align: center; /* Center the text */
+    transform: rotate(180deg); /* Flip the text to face right */
+    position: absolute; /* Position it on the left */
+    left: 30%; /* Align to the left edge */
+    top: 50%; /* Center it vertically */
+    transform: translateY(-50%) rotate(180deg); /* Adjust position */
+    font-size: 24px; /* Increase font size */
+    white-space: nowrap; /* Prevent text wrapping */
+    background-color: #f1ebfd;
+    padding: 25px;
+    border-radius: 10px;
+  }

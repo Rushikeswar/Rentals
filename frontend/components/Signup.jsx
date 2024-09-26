@@ -33,10 +33,11 @@ const SignupForm = () => {
 
   useEffect(() => {
     if (!isFocused && email !== '') {
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailPattern = /^[^\s@]+@[^\s@]+\.(com|net|org|edu|gov|mil|int|info|biz|co|in|us|uk|io|ai|tech|me|dev|xyz|live|store|tv)$/i;
       setEmailError(!emailPattern.test(email));
     }
   }, [isFocused, email]);
+
 
   useEffect(() => {
     setConfirmPasswordError(password !== confirmpassword);

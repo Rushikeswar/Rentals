@@ -41,29 +41,8 @@ import AccountNotifications from '../frontend/components/Userdashboard/AccountsN
 import ManagerNotifications from '../frontend/components/Managerdashboard/ManagerNotifications.jsx';
 
 import '../frontend/css/App.css';
-
-
-// const checkcookieStatus = (x) => {
-//   const cookieValue = document.cookie
-//       .split("; ")
-//       .find(row => row.startsWith(`${x}=`));
-  
-//   // Return the value of the cookie (after `=`) if it exists, otherwise null
-//   return cookieValue ? cookieValue.split('=')[1] : null;
-// };
-
-// Function to check if the user has a specific role
-// const checkrole = (role) => {
-//   const userid = checkcookieStatus("user_id");
-//   const userRole = checkcookieStatus("role");
-//   console.log(userid,userRole)
-//   // Check if both user_id and role exist and the role matches
-//   if (userid && userRole) {
-//       return userRole === role;
-//   }
-  
-//   return false;
-// };
+import FAQPage from '../frontend/components/FAQPage.jsx'
+import About from '../frontend/components/About.jsx';
 
 const allowedCategories = ['bikes', 'cars', 'cameras', 'drones','speakers','fishingrods','cycles'];
 
@@ -237,6 +216,14 @@ function App() {
         element:(<AccountNotifications/>)
       }
     ]
+  },
+  {
+    path: '/faq',
+    element: <FAQPage/>,
+  },
+  {
+    path:'/about',
+    element:<About/>
   },
   {
     path:'*',

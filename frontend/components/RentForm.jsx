@@ -106,7 +106,6 @@ const RentForm = () => {
         const fromDate = new Date(from);
         const toDate = new Date(to);
         const nowPlus30 = new Date();
-        nowPlus30.setMinutes(nowPlus30.getMinutes() + 30);
         const roundedNow = roundUpToNextHalfHour(nowPlus30);
 
         if (fromDate < roundedNow) {

@@ -7,6 +7,7 @@ import Category from '../frontend/components/CategoryPage.jsx';
 import MainLayout from '../frontend/components/MainLayout.jsx';
 import ProductbookingPage from '../frontend/components/ProductbookingPage.jsx';
 import NotFound from '../frontend/components/NotFoundPage.jsx';
+import NoAccessPage from '../frontend/components/NoAccessPage.jsx';
 import ProductPage from '../frontend/components/ProductPage.jsx';
 
 
@@ -29,18 +30,40 @@ import AdminRevenue from '../frontend/components/Admindashboard/AdminRevenue.jsx
 import AdminUploads from '../frontend/components/Admindashboard/AdminUploads.jsx';
 import AdminCategory from '../frontend/components/Admindashboard/AdminCategory.jsx';
 import WelcomeAdmin from "../frontend/components/Admindashboard/AdminWelcome.jsx"
+import AddLocation from '../frontend/components/Admindashboard/AddBranch.jsx';
 
 import AccountProfile from '../frontend/components/Userdashboard/AccountProfile.jsx';
 import AccountDetails from '../frontend/components/Userdashboard/AccountDetails.jsx';
 import YourBookings from '../frontend/components/Userdashboard/YourBookings.jsx';
 import YourRentals from "../frontend/components/Userdashboard/YourRentals.jsx";
 import AccountSettings from '../frontend/components/Userdashboard/AccountSettings.jsx';
-
-// import ManagerPage from  '../frontend/components/ManagerPage.jsx';
+import AccountNotifications from '../frontend/components/Userdashboard/AccountsNotifications.jsx';
 import ManagerNotifications from '../frontend/components/Managerdashboard/ManagerNotifications.jsx';
-// import ManagerBookings from '../frontend/components/Managerdashboard/ManagerBookings.jsx';
 
 import '../frontend/css/App.css';
+
+
+// const checkcookieStatus = (x) => {
+//   const cookieValue = document.cookie
+//       .split("; ")
+//       .find(row => row.startsWith(`${x}=`));
+  
+//   // Return the value of the cookie (after `=`) if it exists, otherwise null
+//   return cookieValue ? cookieValue.split('=')[1] : null;
+// };
+
+// Function to check if the user has a specific role
+// const checkrole = (role) => {
+//   const userid = checkcookieStatus("user_id");
+//   const userRole = checkcookieStatus("role");
+//   console.log(userid,userRole)
+//   // Check if both user_id and role exist and the role matches
+//   if (userid && userRole) {
+//       return userRole === role;
+//   }
+  
+//   return false;
+// };
 
 const allowedCategories = ['bikes', 'cars', 'cameras', 'drones','speakers','fishingrods','cycles'];
 
@@ -55,12 +78,13 @@ const CategoryWrapper = () => {
   return <NotFound/>;
   }
 };
+
+
 function App() {
   const router = createBrowserRouter([
     {
       path: '/',
       element:<MainLayout/>,   
-      // errorElement:<ErrorPage/>,
     children:[
     {
       path: '/FilterForm',
@@ -136,6 +160,10 @@ function App() {
         path:"/adminpage/managers",
         element:<Managers/>
       },
+      {
+        path:"/adminpage/addLocation",
+        element:<AddLocation/>
+      },
     ],
   },
   {
@@ -204,7 +232,10 @@ function App() {
           <AccountSettings/>
         )
       },
-
+      {
+        path:"/accountProfile/notifications",
+        element:(<AccountNotifications/>)
+      }
     ]
   },
   {

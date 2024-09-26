@@ -43,7 +43,7 @@
     }
 }
 
-.location {
+.location-m {
     writing-mode: vertical-rl; /* Makes the text vertical */
     text-align: center; /* Center the text */
     transform: rotate(180deg); /* Flip the text to face right */

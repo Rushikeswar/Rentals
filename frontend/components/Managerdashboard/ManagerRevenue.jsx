@@ -110,7 +110,7 @@ const ManagerRevenue = () => {
                 <p>Loading...</p>
             ) : (
                 <div className="chart-section-2">
-                    <div className="location">{location}</div>
+                    <div className="location-m">{location}</div>
                     <div className="chart-container">
                         <h2>Daily Revenue(Previous 7 days)</h2>
                         {dailyRevenueData.length > 0 ? (

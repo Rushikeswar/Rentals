@@ -10,6 +10,7 @@ import {Product} from './backend/models/ProductSchema.js';
 import {Booking} from './backend/models/Bookings.js';
 import { Manager } from './backend/models/ManagerSchema.js';
 import {Location} from './backend/models/Location.js';
+import { Admin } from './backend/models/Admin.js';
 const url='mongodb://localhost:27017/Rentals';
 const app = express();
 app.use(cookieParser());
@@ -74,37 +75,7 @@ app.post('/signup', async (req, res) => {
 
 
 
-//Login
 
-// app.post('/login', async (req, res) => {
-//   const { username,password } = req.body;
-
-//   if (!username || !password) {
-//     return res.status(400).json({ errormessage: 'All fields are required' });
-//   }
-
-//   try {
-//     const existingUser = await User.findOne({ username });
-//     if (!existingUser) {
-//       return res.status(401).json({ errormessage: 'Username not Found !' });
-//     }
-//     else{
-//       const checkpassword=await bcrypt.compare(password,existingUser.password)
-//     if (!checkpassword) {
-//       return res.status(401).json({ errormessage: 'Password is incorrect !' });
-//     }
-//     }
-
-//     //storing in cookies
-
-//     // res.cookie('username',username, { httpOnly: false, secure: false, sameSite: 'lax',path:'/' });
-//     res.cookie('user_id',existingUser._id.toString(),{ httpOnly: false, secure: false, sameSite: 'lax',path:'/' });
-//     res.status(200).json({ errormessage: 'User Login successfully' });
-//   } catch (error) {
-//     console.error('Error occured while logging in :', error);
-//     res.status(500).json({ errormessage: 'Error while user logging in !' });
-//   }
-// });
 
 app.post('/login', async (req, res) => {
   const { username, password, role } = req.body;
@@ -127,7 +98,7 @@ app.post('/login', async (req, res) => {
       } else {
         return res.status(401).json({ errormessage: 'Manager not found!' });
       }
-    } else {
+    } else if (role === "User") {
       const existingUser = await User.findOne({ username });
       if (!existingUser) {
         return res.status(401).json({ errormessage: 'Username not found!' });
@@ -138,6 +109,16 @@ app.post('/login', async (req, res) => {
         return res.status(401).json({ errormessage: 'Password is incorrect!' });
       }
       user_id = existingUser._id.toString(); // Set user_id for User
+    } else {
+      const existingUser = await Admin.findOne({ username });
+      if (!existingUser) {
+        return res.status(401).json({ errormessage: 'Username not found!' });
+      }
+      const checkpassword = password === existingUser.password;
+      if (!checkpassword) {
+        return res.status(401).json({ errormessage: 'Password is incorrect!' });
+      }
+      user_id = existingUser._id.toString();
     }
 
     // Set cookie for user (either Manager or User)
@@ -267,9 +248,8 @@ app.post('/booking',async (req,res)=>{
     bookingDate,
   });
   const y=await newbooking.save();
-  const newbookingid=newbooking._id.toString();
+  const newbookingid=newbooking._id.toString(); 
   const x=await User.findOneAndUpdate({_id:buyerid},{$push:{bookings:newbookingid}},{new:true});
-  
   if(!y)
   {console.log("booking ot successful")
     return res.status(401).json({message:"booking not successful !"})
@@ -282,6 +262,8 @@ app.post('/booking',async (req,res)=>{
   product.bookingdates.push([new Date(fromDateTime),new Date(toDateTime)]);
   await product.save();
 
+  const z=await User.findOneAndUpdate({_id:product.userid},{$push:{notifications:{message:newbookingid,seen:false}}},{new:true})
+  await z.save();
   res.status(200).json({message:"Booking successful !"});
   console.log("booking successful !");
   }
@@ -290,6 +272,54 @@ app.post('/booking',async (req,res)=>{
     res.status(500).json({message:"server error !"});
   }
 })
+
+
+app.get("/grabAdmin", async (req, res) => {
+  const userId = req.cookies.user_id;
+  console.log("User ID from cookie:", userId); // Log user ID
+
+  if (!userId) {
+    return res.status(400).json({ message: "No user ID found in cookies" });
+  }
+
+  try {
+    const admin = await Admin.findById(userId);
+    console.log("admin", admin);
+    if (!admin) {
+      console.log("No Admin found for user ID:", userId); // Log if no admin found
+      return res.status(404).json({ message: "Admin not found" });
+    }
+    const name = admin.username;
+    res.json({ name }); // Return the name inside an object
+  } catch (err) {
+    console.error("Error fetching Name", err);
+    res.status(500).json({ message: "Error fetching Name", error: err.message });
+  }
+});
+
+app.post('/api/addBranch', async (req, res) => {
+  const { name } = req.body;
+
+  try {
+    let locationDoc = await Location.findOne();
+
+    if (locationDoc) {
+      if (locationDoc.locations.includes(name)) {
+        return res.status(400).json({ message: 'Branch is already in existence' });
+      }
+
+      locationDoc.locations.push(name);
+      await locationDoc.save();
+    } else {
+      locationDoc = new Location({ locations: [name] });
+      await locationDoc.save();
+    }
+
+    res.status(201).json({ message: 'Location added successfully', locations: locationDoc.locations });
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding location', error });
+  }
+});
 
 app.get('/admindashboard/registeredusers',async(req,res)=>{
   try{
@@ -1267,3 +1297,69 @@ app.get("/api/dashboard/categories-cat", async (req, res) => {
     res.status(500).json({ message: "Error fetching categories" });
   }
 });
+
+
+
+
+
+///userbooking notification
+
+
+app.get('/user/notifications',async(req,res)=>{
+  try {
+    const userid = req.cookies.user_id;
+    if (userid) {
+      const exist_user = await User.findById(userid);
+      const notifications=exist_user.notifications;
+      const bookingids=notifications.map(x=>x.message);
+      if (exist_user) {
+        res.json({notifications:notifications,bookingids:bookingids});
+      } else {
+        res.status(404).json({ message: "booking not found" });
+      }
+    } else {
+      res.status(400).json({ message: "No user cookie found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+})
+
+app.get('/user/notifications/:bookingid',async(req,res)=>{
+  const {bookingid}=req.params;
+  console.log(bookingid);
+  try{
+    const reqbooking=await Booking.findById(bookingid);
+    const reqproduct=await Product.findById(reqbooking.product_id);
+    const reqbuyer=await User.findById(reqbooking.buyerid);
+    if(!reqbooking)
+    {    console.log(reqbooking);
+      return res.status(404).json({error :'booking not found !'});
+    }
+    return res.status(200).json({reqbooking:reqbooking,reqproduct:reqproduct,reqbuyer:reqbuyer});
+    
+  }catch(error)
+  {
+    res.status(500).json({error:"server error !"});
+  }
+})
+
+app.post('/user/notifications/markAsSeen',async(req,res)=>{
+  try{
+      const userid = req.cookies.user_id;
+      const {notificationid}=req.body;
+      const removednotification=await User.findByIdAndUpdate(userid,{ $pull: { notifications: { _id: notificationid } } },{new:true} );
+      if(!removednotification)
+      {
+        return res.status(400).json({message:"notification not removed .error occured !"});
+      }
+      else{
+        return res.status(200).json({message:"notification removed successfully!"});
+      }
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+})

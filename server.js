@@ -36,8 +36,8 @@ app.get('/locations', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-//Signup
 
+//Signup
 app.post('/signup', async (req, res) => {
   const { username, email, dateofbirth,password } = req.body;
   if (!username || !email || !dateofbirth || !password) {
@@ -62,6 +62,7 @@ app.post('/signup', async (req, res) => {
       email,
       dateofbirth,
       password: hashedPassword,
+      expired:false,
     });
 
     await newUser.save();
@@ -71,10 +72,6 @@ app.post('/signup', async (req, res) => {
     res.status(500).json({ errormessage: 'Error registering user' });
   }
 });
-
-
-
-
 
 
 app.post('/login', async (req, res) => {
@@ -103,7 +100,10 @@ app.post('/login', async (req, res) => {
       if (!existingUser) {
         return res.status(401).json({ errormessage: 'Username not found!' });
       }
-
+      if(role=='User' && existingUser.expired)
+        {
+          return res.status(401).json({errormessage: "Account not found !"})
+        }
       const checkpassword = await bcrypt.compare(password, existingUser.password);
       if (!checkpassword) {
         return res.status(401).json({ errormessage: 'Password is incorrect!' });
@@ -144,7 +144,6 @@ app.post('/login', async (req, res) => {
 });
 
 //RentForm
-
 app.post('/RentForm', async (req, res) => {
   const {      productType,
     productName,
@@ -324,8 +323,8 @@ app.post('/api/addBranch', async (req, res) => {
 
 app.get('/admindashboard/registeredusers',async(req,res)=>{
   try{
-    const users=await User.find({});
-    const usercount = await User.countDocuments({});
+    const users=await User.find({expired:false});
+    const usercount = await User.countDocuments({expired:false});
     if(!users)
     {
       return res.status(200).json({error :'Users not found !'});
@@ -351,7 +350,7 @@ app.post('/admindashboard/deleteusers', async (req, res) => {
 
     // If forceDelete is true or there are no bookings, proceed with deletion
     await Product.updateMany({ userid: user_id }, { $set: { expired: true } }, { new: true });
-    const deletedUser = await User.findByIdAndDelete(user_id);
+    const deletedUser = await User.findOneAndUpdate({_id:user_id},{$set:{expired :true}},{new:true});
 
     if (!deletedUser) {
       return res.status(200).json({ message: 'User not found in database!' });
@@ -363,7 +362,6 @@ app.post('/admindashboard/deleteusers', async (req, res) => {
     return res.status(500).json({ message: 'Server error!' });
   }
 });
-
 
 app.post('/admindashboard/createmanager',async(req,res)=>{
   console.log(req.body);
@@ -406,7 +404,6 @@ app.post('/admindashboard/createmanager',async(req,res)=>{
 
 })
 
-
 app.get('/admindashboard/registeredmanagers', async (req, res) => {
   try {
     const users = await Manager.find({});
@@ -420,7 +417,6 @@ app.get('/admindashboard/registeredmanagers', async (req, res) => {
     return res.status(500).json({ error: 'Server error!' });
   }
 });
-
 
 app.post('/admindashboard/deletemanagers',async(req,res)=>{
 
@@ -475,8 +471,6 @@ app.get("/grabBookings", async (req, res) => {
   }
   
 });
-
-
 
 app.post("/settings", async (req, res) => {
   try {
@@ -571,7 +565,6 @@ app.get("/grabRentals", async (req, res) => {
   }
 });
 
-
 app.post('/signOut', async (req, res) => {
   try {
     const userid = req.cookies.user_id;
@@ -650,7 +643,6 @@ app.post('/manager/notifications/markAsSeen',async(req,res)=>{
   }
 })
 
-
 app.get('/manager/products/:product_id',async(req,res)=>{
   const {product_id}=req.params;
   console.log(product_id);
@@ -667,11 +659,6 @@ app.get('/manager/products/:product_id',async(req,res)=>{
     res.status(500).json({error:"server error !"});
   }
 })
-
-const PORT =3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
 
 app.get("/api/dashboard/daily-bookings", async (req, res) => {
   try {
@@ -1266,12 +1253,7 @@ app.get("/api/dashboard/categories-cat", async (req, res) => {
 });
 
 
-
-
-
 ///userbooking notification
-
-
 app.get('/user/notifications',async(req,res)=>{
   try {
     const userid = req.cookies.user_id;
@@ -1312,21 +1294,60 @@ app.get('/user/notifications/:bookingid',async(req,res)=>{
   }
 })
 
-app.post('/user/notifications/markAsSeen',async(req,res)=>{
-  try{
-      const userid = req.cookies.user_id;
-      const {notificationid}=req.body;
-      const removednotification=await User.findByIdAndUpdate(userid,{ $pull: { notifications: { _id: notificationid } } },{new:true} );
-      if(!removednotification)
-      {
-        return res.status(400).json({message:"notification not removed .error occured !"});
-      }
-      else{
-        return res.status(200).json({message:"notification removed successfully!"});
-      }
-  }
-  catch (error) {
+app.post('/user/notifications/markAsSeen', async (req, res) => {
+  try {
+    const userid = req.cookies.user_id;
+    const { notificationid } = req.body;
+
+    // Update the notification's seen field to true only if it is currently false
+    const updatedNotification = await User.findOneAndUpdate(
+      { _id: userid, "notifications._id": notificationid, "notifications.seen": false },
+      { $set: { "notifications.$.seen": true } },
+      { new: true }
+    );
+
+    // if (!updatedNotification) {
+    //   return res.status(400).json({ message: "Notification was not updated. It may already be marked as seen or not found." });
+    // } else {
+    //   return res.status(200).json({ message: "Notification marked as seen successfully!" });
+    // }
+  } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
-})
+});
+
+
+app.post('/user/notifications/products', async (req, res) => {
+  const { bookingids } = req.body;  // Extract bookingids from the request body
+  try {
+    const products = [];
+
+    for (const bookingid of bookingids) {
+      const reqbooking = await Booking.findById(bookingid);
+      if (!reqbooking) continue;
+
+      const reqproduct = await Product.findById(reqbooking.product_id);
+      if (!reqproduct) continue;
+
+      const reqbuyer = await User.findById(reqbooking.buyerid);
+      if (!reqbuyer) continue;
+
+      products.push({ reqbooking, reqproduct, reqbuyer });
+    }
+    if (products.length === 0) {
+      return res.status(404).json({ error: 'No bookings found!' });
+    }
+
+    return res.status(200).json({ products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error!' });
+  }
+});
+
+
+const PORT =3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

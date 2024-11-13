@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import "../../css/Userdashboardcss/AccountProfile.css";
 import { FaUser, FaClipboardList, FaShoppingCart, FaCog, FaSignOutAlt } from 'react-icons/fa';
-import { IoNotificationsCircleSharp } from "react-icons/io5"
+import { IoNotificationsCircleSharp } from "react-icons/io5";
+import Header from '../Header.jsx';
+import Footer from '../Footer.jsx';
 const AccountProfile = () => {
   const navigate = useNavigate();
-
   const handleSignOut = async () => {
     try {
       const response = await fetch("http://localhost:3000/signOut", {
@@ -27,6 +28,8 @@ const AccountProfile = () => {
   };
 
   return (
+    <>
+    <Header/>
     <div className="account-profile-page"> {/* Outer class to scope styles */}
       <div className="account-profile">
         <h1 style={{ color: '#A3FFD6' }}>Account Profile</h1>
@@ -66,11 +69,13 @@ const AccountProfile = () => {
             </ul>
           </nav>
           <div className="card">
-            <Outlet />
+            <Outlet/>
           </div>
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 };
 

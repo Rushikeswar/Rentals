@@ -7,13 +7,8 @@ import Category from '../frontend/components/CategoryPage.jsx';
 import MainLayout from '../frontend/components/MainLayout.jsx';
 import ProductbookingPage from '../frontend/components/ProductbookingPage.jsx';
 import NotFound from '../frontend/components/NotFoundPage.jsx';
-import NoAccessPage from '../frontend/components/NoAccessPage.jsx';
 import ProductPage from '../frontend/components/ProductPage.jsx';
 
-
-// import AdminPage from '../frontend/components/AdminPage.jsx';
-// import Adminusers from '../frontend/components/Admindashboard/Users';
-// import Managers from '../frontend/components/Admindashboard/Managerslist.jsx';
 
 import Managers from "../frontend/components/Admindashboard/ManagersList.jsx"
 import ManagerDefault from '../frontend/components/Managerdashboard/ManagerDefault.jsx';

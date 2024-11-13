@@ -38,6 +38,18 @@ const SignupForm = () => {
     }
   }, [isFocused, email]);
 
+  useEffect(()=>{
+    if (dateofbirth&&!validAge(dateofbirth)) {
+      setError(true);
+      setMessage("You must be at least 18 years old to sign up.");
+      return;
+    }
+    else{
+      setError(false);
+      setMessage('');
+    }
+  
+  },[dateofbirth])
 
   useEffect(() => {
     setConfirmPasswordError(password !== confirmpassword);
@@ -203,7 +215,7 @@ const SignupForm = () => {
           id="dateofbirth"
           className="form-input"
           value={dateofbirth}
-          onChange={(e) => setdateofbirth(e.target.value)}
+          onChange={(e) => {setdateofbirth(e.target.value)}}
           required
         />
 
@@ -239,5 +251,4 @@ const SignupForm = () => {
 </div>
   );
 };
-
 export default SignupForm;

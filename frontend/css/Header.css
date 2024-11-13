@@ -9,9 +9,6 @@
     flex-shrink: 0;
   }
 
-#iconloginregister
-{
-}
 #login_register_button a {
     color: yellow;
     text-decoration: none; /* Added to remove underline */

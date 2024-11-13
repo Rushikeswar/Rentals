@@ -27,12 +27,11 @@ const ProductbookingPage = () => {
     const { date: fromDateFormatted, time: fromTimeFormatted } = formatDateTime(fromDate);
     const { date: toDateFormatted, time: toTimeFormatted } = formatDateTime(toDate);
 
-    // Calculate duration in hours
-    const timeDiff = Math.abs(toDate - fromDate); // Time difference in milliseconds
-    const hoursDiff = Math.ceil(timeDiff / (1000 * 60 * 60)); // Convert milliseconds to hours
-    // Calculate base fare and taxes
+
+    const timeDiff = Math.abs(toDate - fromDate);
+    const hoursDiff = Math.ceil(timeDiff / (1000 * 60 * 60));
     const baseFare = reqproduct.price * hoursDiff;
-    const taxes = (baseFare * 0.10).toFixed(2); // 10% tax
+    const taxes = (baseFare * 0.10).toFixed(2);
     const total = (parseFloat(baseFare) + parseFloat(taxes)).toFixed(2);
 
     const getCookieValue = (name) => {
@@ -42,11 +41,6 @@ const ProductbookingPage = () => {
       };
       
       const handlepayment = async () => {
-        // const username = getCookieValue('username');
-        // if(!username)
-        // {   sessionStorage.setItem('lastpage','bookingpage');
-        //     navigate('/login');
-        // }
         const userid = getCookieValue('user_id');
         if(!userid)
         {   sessionStorage.setItem('lastpage','bookingpage');

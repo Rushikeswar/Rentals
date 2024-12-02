@@ -19,15 +19,7 @@ const SignupForm = () => {
 
 
   function validateUsername(username) {
-    // Regular expression to match the criteria
-    const regex = /^[a-z]{5,}$/;
-    
-    // Test the username against the regex
-    if (regex.test(username)) {
-        return true; // Valid username
-    } else {
-        return false; // Invalid username
-    }
+    return /^[a-z][a-z0-9]{4,}$/.test(username);
 }
 
 
@@ -99,6 +91,7 @@ const SignupForm = () => {
     {
       setError(true);
       setMessage("username must be 5 letters of lowercase letters !")
+      return
     }
 
 

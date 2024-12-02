@@ -12,7 +12,6 @@ useEffect(() => {
     const usernameCookie = document.cookie
       .split("; ")
       .find(row => row.startsWith("user_id="));
-    console.log(usernameCookie);
     if (usernameCookie && usernameCookie.split("=")[1]) {
       setislogin(true);
     }
@@ -53,7 +52,7 @@ useEffect(() => {
               </ul>
             </li>
             <li><NavLink to="/faq">FAQs</NavLink></li>
-            <li><NavLink to="/Rentform">RentForm</NavLink></li>
+            <li><NavLink to="/Rentform">LEND FORM</NavLink></li>
           </ul>
         </nav>
       </div>

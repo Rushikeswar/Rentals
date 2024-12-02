@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider,useParams } from 'react-router-dom';
+import Home from '../frontend/components/Home';
 import SignupForm from '../frontend/components/Signup';
 import LoginForm from '../frontend/components/Login';
 import RentForm from '../frontend/components/RentForm.jsx';
@@ -18,6 +19,9 @@ import ManagerBookings from "../frontend/components/Managerdashboard/ManagerBook
 import ManagerCategory from "../frontend/components/Managerdashboard/ManagerCategory.jsx";
 import ManagerRevenue from "../frontend/components/Managerdashboard/ManagerRevenue.jsx";
 import ManagerUploads from "../frontend/components/Managerdashboard/ManagerUploads.jsx";
+import ManagerUploadNotifications from '../frontend/components/Managerdashboard/ManagerUploadNotifications.jsx';
+import ManagerBookingNotifications from '../frontend/components/Managerdashboard/ManagerBookingNotifications.jsx';
+
 import AdminPage from '../frontend/components/AdminPage.jsx';
 import Adminusers from '../frontend/components/Admindashboard/Users';
 import AdminBookings from '../frontend/components/Admindashboard/AdminBookings.jsx';
@@ -33,7 +37,7 @@ import YourBookings from '../frontend/components/Userdashboard/YourBookings.jsx'
 import YourRentals from "../frontend/components/Userdashboard/YourRentals.jsx";
 import AccountSettings from '../frontend/components/Userdashboard/AccountSettings.jsx';
 import AccountNotifications from '../frontend/components/Userdashboard/AccountsNotifications.jsx';
-import ManagerNotifications from '../frontend/components/Managerdashboard/ManagerNotifications.jsx';
+
 
 import '../frontend/css/App.css';
 import FAQPage from '../frontend/components/FAQPage.jsx'
@@ -60,6 +64,13 @@ function App() {
       path: '/',
       element:<MainLayout/>,   
     children:[
+
+      {
+        path: '/',
+        element: (
+            <Home />
+        ),
+      },
     {
       path: '/FilterForm',
       element: (
@@ -149,8 +160,12 @@ function App() {
         element:<ManagerDefault/>
       },
       {
-        path:"/managerPage/notifications",
-        element:<ManagerNotifications/>
+        path:"/managerPage/uploadnotifications",
+        element:<ManagerUploadNotifications/>
+      },
+      {
+        path:"/managerPage/bookingnotifications",
+        element:<ManagerBookingNotifications/>
       },
       {
         path:"/managerPage/bookings",

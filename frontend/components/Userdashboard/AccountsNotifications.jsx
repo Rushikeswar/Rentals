@@ -129,6 +129,33 @@ const AccountNotifications = () => {
                                                 src={selectedProduct.photo[0]}
                                                 alt={selectedProduct.productName}
                                             />
+                                            <div
+                                                className={`mbn-user-bookingstatus ${selectedBooking.level === 0
+                                                        ? 'booked'
+                                                        : selectedBooking.level === 1
+                                                            ? 'ready'
+                                                            : selectedBooking.level === 2
+                                                                ? 'using'
+                                                                : selectedBooking.level === 3
+                                                                    ? 'completed'
+                                                                    : 'unknown'
+                                                    }`}
+                                            >
+                                                {(() => {
+                                                    switch (selectedBooking.level) {
+                                                        case 0:
+                                                            return 'to be Delivered';
+                                                        case 1:
+                                                            return 'Delivered';
+                                                        case 2:
+                                                            return 'Using';
+                                                        case 3:
+                                                            return 'Returned';
+                                                        default:
+                                                            return 'Unknown Status';
+                                                    }
+                                                })()}
+                                            </div>
                                         </div>
                                     </div>
                                 )}

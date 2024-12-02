@@ -68,9 +68,35 @@ const YourBookings = () => {
                       src={booking.photo[0]}
                       alt={booking.productName}
                     />
-                    <div className="card-content" style={{display:'flexbox',flexDirection:'row',gap:'50px'}}>
+                  <div
+    className={`mbn-user-bookingstatus ${
+        booking.level === 0
+            ? 'booked'
+            : booking.level === 1
+            ? 'ready'
+            : booking.level === 2
+            ? 'using'
+            : booking.level === 3
+            ? 'completed'
+            : 'unknown'
+    }`}
+>
+    {(() => {
+        switch (booking.level) {
+            case 0:
+                return 'Booked';
+            case 1:
+                return 'Ready to Use';
+            case 2:
+                return 'Using';
+            case 3:
+                return 'Completed';
+            default:
+                return 'Unknown Status';
+        }
+    })()}
+</div>
 
-                    </div>
                   </div>
                 )}
                 <div className="card-content">

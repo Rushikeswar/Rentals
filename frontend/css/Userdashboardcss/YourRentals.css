@@ -81,3 +81,33 @@
   color: #e74c3c; /* Error message color */
   font-size: 20px;
 }
+
+
+.mbn-user-bookingstatus {
+
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: flex;
+  text-transform: uppercase;
+  color: white;
+  justify-content: center;
+}
+
+.mbn-user-bookingstatus.booked {
+  background-color: #007bff;
+}
+
+.mbn-user-bookingstatus.ready {
+  background-color: #28a745;
+}
+
+.mbn-user-bookingstatus.using {
+  background-color: #ffc107;
+  color: black;
+}
+
+.mbn-user-bookingstatus.completed {
+  background-color: #6c757d;
+}

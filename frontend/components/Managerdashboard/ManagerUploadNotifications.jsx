@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import Carousel from '../Carousel.jsx';
-const ManagerNotifications = () => {
+import '../../css/Admindashboardcss/ManagerNotifications.css';
+const ManagerUploadNotifications = () => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [productids, setProductIds] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
-    const [selectedNotificationId, setSelectedNotificationId] = useState(null);
+    const [selectedNotificationId, setSelectedNotificationId] = useState(null); // Store selected notification ID
 
+    // Fetch unseen notifications on component mount
     useEffect(() => {
         fetchUnseenNotifications();
     }, []);
 
     const fetchUnseenNotifications = async () => {
         try {
-            const response = await fetch('http://localhost:3000/manager/notifications', {
+            const response = await fetch('http://localhost:3000/manager/uploadnotifications', {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include', 
+                credentials: 'include', // Assuming you're using cookies for session handling
             });
 
             if (!response.ok) {
@@ -57,7 +59,7 @@ const ManagerNotifications = () => {
 
     const markAsSeen = async (id, selectedProductId, isRejected) => {
         try {
-            const response = await fetch(`http://localhost:3000/manager/notifications/markAsSeen`, {
+            const response = await fetch(`http://localhost:3000/manager/uploadnotifications/markAsSeen`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -74,7 +76,7 @@ const ManagerNotifications = () => {
     };
 
     const handleNotificationClick = (notificationId, productId) => {
-        setSelectedNotificationId(notificationId);
+        setSelectedNotificationId(notificationId); // Set the currently selected notification ID
         fetchProductDetails(productId);
     };
 
@@ -98,7 +100,7 @@ const ManagerNotifications = () => {
                             <p onClick={() => handleNotificationClick(notification._id, productids[index])}>
                                 {`${notification.message} is uploaded! Click to view details.`}
                             </p>
-                            {selectedNotificationId === notification._id && selectedProduct && ( 
+                            {selectedNotificationId === notification._id && selectedProduct && ( // Only show details for the selected notification
                                 <div className="product-details-modal">
                                     <div>
                                     <h3>Product Details</h3>
@@ -126,4 +128,4 @@ const ManagerNotifications = () => {
     );
 };
 
-export default ManagerNotifications;
+export default ManagerUploadNotifications;

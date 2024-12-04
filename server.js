@@ -180,7 +180,7 @@ app.post('/RentForm', async (req, res) => {
       uploadDate:new Date(),
       bookingdates:[],
       bookingids:[],
-      expired:false,
+      expired:true,
     });
 
     const savedProduct = await newProduct.save();
@@ -424,13 +424,13 @@ app.post('/admindashboard/createmanager',async(req,res)=>{
     const existingbranch= await Manager.findOne({branch});
     if(existingbranch)
     {
-      return res.status(409).json({ errormessage: 'Manager for branch already exists !'});
+      return res.status(404).json({ errormessage: 'Manager for branch already exists !'});
     }
     if (existingEmail) {
-      return res.status(409).json({ errormessage: 'Email already exists' });
+      return res.status(404).json({ errormessage: 'Email already exists' });
     }
     if (existingUser) {
-      return res.status(409).json({ errormessage: 'Username already exists' });
+      return res.status(404).json({ errormessage: 'Username already exists' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -719,10 +719,14 @@ app.post('/manager/bookingnotifications/results', async (req, res) => {
 });
 
 app.post('/manager/bookingnotifications/updatelevel',async(req,res)=>{
-  const {bid,level}=req.body;
+  const {bid,level,id}=req.body;
   try{
     console.log(bid);
     const booking = await Booking.findByIdAndUpdate(bid,{level:level},{new:true});
+    if(level==3)
+    {
+      const removednotification=await Manager.findByIdAndUpdate(id,{ $pull: { bookingnotifications: { _id: bid } } },{new:true} );
+    }
     if(booking)
     {
       res.status(200).json({result:true});
@@ -786,6 +790,48 @@ app.post('/manager/uploadnotifications/markAsSeen',async(req,res)=>{
     res.status(500).json({ message: "Internal server error" });
   }
 })
+
+app.get('/manager/notifications/countUnseen',async(req,res)=>{
+  try {
+    const userid = req.cookies.user_id;
+    if (userid) {
+      const exist_user = await Manager.findById(userid);
+      const notifications=exist_user.notifications;
+      if (exist_user) {
+        res.json({notifications:notifications});
+      } else {
+        res.status(404).json({ message: "booking not found" });
+      }
+    } else {
+      res.status(400).json({ message: "No user cookie found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+})
+
+app.post('/manager/notifications/markallAsSeen', async (req, res) => {
+  try {
+    const userid = req.cookies.user_id;
+
+    // Update all notifications with seen: false to seen: true
+    const updatedUser = await Manager.findOneAndUpdate(
+      { _id: userid, "notifications.seen": false }, // Match notifications with seen: false
+      { $set: { "notifications.$[].seen": true } }, // Update all notifications' seen field
+      { new: true } // Return the updated user
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found or no unseen notifications" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 app.get('/manager/products/:product_id',async(req,res)=>{
   const {product_id}=req.params;

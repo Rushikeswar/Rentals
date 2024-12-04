@@ -90,18 +90,17 @@ const SignupForm = () => {
     if(!validateUsername(username))
     {
       setError(true);
-      setMessage("username must be 5 letters of lowercase letters !")
+      setMessage("Username: at least 5 characters, lowercase letters/digits, starts with a lowercase letter.!")
       return
     }
-
 
     if (!validPassword(password)) {
       setError(true);
       // setMessage("Password must be 8 characters with upper, lower, digit, and special character.");
-      setMessage("Password must be valid !");
+      setMessage("Invalid password. It must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.");
       return;
     }
-  
+
     if (password !== confirmpassword) {
       setError(true);
       setMessage("Password and confirm password must be equal!");
@@ -141,7 +140,6 @@ const SignupForm = () => {
         setMessage('Signup successful!');
         sessionStorage.setItem('lastpage', 'signup');
         setTimeout(() => {
-          console.log('Navigating to login');
           navigate('/login');
         }, 1000);   
       }
@@ -234,7 +232,7 @@ const SignupForm = () => {
         />
         <label className="form-password-strength">Password Strength: {passwordStrength}</label>
         <button type="submit" className="form-button">Sign Up</button>
-        <div id="message" className={`form-message ${error ? 'error-message' : 'success-message'}`}>
+        <div id="message-login" className={` ${error ? 'error-message-login' : 'success-message-login'}`}>
           {message}
         </div>
       </form>

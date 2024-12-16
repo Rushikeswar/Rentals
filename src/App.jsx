@@ -3,7 +3,6 @@ import Home from '../frontend/components/Home';
 import SignupForm from '../frontend/components/Signup';
 import LoginForm from '../frontend/components/Login';
 import RentForm from '../frontend/components/RentForm.jsx';
-import FilterForm from '../frontend/components/FilterForm.jsx';
 import Category from '../frontend/components/CategoryPage.jsx';
 import MainLayout from '../frontend/components/MainLayout.jsx';
 import ProductbookingPage from '../frontend/components/ProductbookingPage.jsx';
@@ -77,12 +76,6 @@ function App() {
             <Home />
         ),
       },
-    {
-      path: '/FilterForm',
-      element: (
-          <FilterForm />
-      ),
-    },
     {
       path: '/category/:category',
       element: (

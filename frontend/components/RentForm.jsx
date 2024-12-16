@@ -224,7 +224,7 @@ const RentForm = () => {
         <div className="rent-form-container">
             <div className="rent-form-wrapper rent-form-image" style={{ backgroundImage: `url(${backgroundImage})` }}>
                 <form id='productForm' style={{ display: 'flex', flexDirection: "column" }} onSubmit={handleSubmit}>
-                    <h2 className="rent-form-heading">Rent Form</h2>
+                    <h2 className="rent-form-heading">Lend Form</h2>
                     <label htmlFor='productType'>SELECT PRODUCT TYPE:</label>
                     <select id='productType' name='productType' value={formData.productType} onChange={handleChange} required>
                         <option value="">Select a product</option>

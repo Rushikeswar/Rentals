@@ -202,8 +202,8 @@ app.post('/products', async (req, res) => {
     const query={};
     if(productType) query.productType=productType;
     if(locationName) query.locationName=locationName;
-    if(fromDateTime) query.fromDateTime={ $gte: new Date(fromDateTime) };
-    if(toDateTime) query.toDateTime= { $lte: new Date(toDateTime) };
+    if(fromDateTime) query.fromDateTime={ $lte: new Date(fromDateTime) };
+    if(toDateTime) query.toDateTime= { $gte: new Date(toDateTime) };
     if(price) query.price={$lte : price};
     query.expired=false;
     const products = await Product.find(query);
@@ -648,7 +648,7 @@ app.post('/signOut', async (req, res) => {
 
 // Route: Fetch booking notifications
 app.post('/manager/fetchBookingnotifications', async (req, res) => {
-  const { managerid } = req.body;
+  const  managerid  = req.cookies.user_id;
 
   if (!managerid) {
       return res.status(400).json({ message: "Manager ID is required" });

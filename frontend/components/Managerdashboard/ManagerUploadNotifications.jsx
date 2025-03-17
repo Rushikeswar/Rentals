@@ -154,9 +154,10 @@ const ManagerUploadNotifications = () => {
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include', // Assuming you're using cookies for session handling
             });
-
             if (!response.ok) {
-                console.log(response);  
+                const errorText = await response.text(); // Read the response as text
+                console.error("Server Response (Text):", errorText); // Log raw response
+                return;
             }
             const data = await response.json();
             const notifs = data.notifications;
@@ -231,7 +232,7 @@ const ManagerUploadNotifications = () => {
                     {notifications.map((notification, index) => (
                         <li key={notification._id} className="notification-item">
                             <p onClick={() => handleNotificationClick(notification._id, productids[index])}>
-                                {`${notification.message} is uploaded! Click to view details.`}
+                                {`New Product  is uploaded! Click to view details.`}
                             </p>
                             {selectedNotificationId === notification._id && selectedProduct && ( // Only show details for the selected notification
                                 <div className="product-details-modal" >

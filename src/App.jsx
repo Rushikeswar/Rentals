@@ -92,6 +92,12 @@ function App() {
          <ProductbookingPage/>
       ),
     },
+    {
+      path: '/RentForm',
+      element: (
+          <RentForm />
+      ),
+    },
       {
     path: '/faq',
     element: <FAQPage/>,
@@ -114,12 +120,7 @@ function App() {
         <SignupForm/>
     ),
   },
-  {
-    path: '/RentForm',
-    element: (
-        <RentForm />
-    ),
-  },
+ 
   {
     path:'/adminpage',
     element:<AdminPage/>,

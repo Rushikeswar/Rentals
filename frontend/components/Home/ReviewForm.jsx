@@ -50,6 +50,7 @@ export const ReviewForm = ({ onSubmitSuccess }) => {
         credentials: 'include',
       });
       if (!response.ok) {
+        console.log(response)
         setMessage("Review not successful!");
       } else {
         setMessage("Review submitted successfully!");

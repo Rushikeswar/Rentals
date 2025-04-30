@@ -14,7 +14,7 @@ client.on('error', err => console.log('Redis Client Error', err));
 
 await client.connect();
 
-export default redisClient;
+export default client;
 
 // await client.set('foo', 'bar');
 // const result = await client.get('foo');

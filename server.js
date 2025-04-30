@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import client from './redisClient.js';
 import { connecttomongodb } from './backend/models/connect.js';
 import { User } from './backend/models/UserSchema.js';
 import {Product} from './backend/models/ProductSchema.js';
@@ -307,23 +308,63 @@ app.post('/RentForm', async (req, res) => {
 });
 
 
+// app.post('/products', async (req, res) => {
+//   try {
+//     const {productType, locationName, fromDateTime, toDateTime, price}=await req.body;
+//     const query={};
+//     if(productType) query.productType=productType;
+//     if(locationName) query.locationName=locationName;
+//     if(fromDateTime) query.fromDateTime={ $lte: new Date(fromDateTime) };
+//     if(toDateTime) query.toDateTime= { $gte: new Date(toDateTime) };
+//     if(price) query.price={$lte : price};
+//     query.expired=false;
+//     const products = await Product.find(query);
+//     res.status(200).json(products);
+//   } catch (error) {
+//     console.error('Error fetching products:', error);
+//     res.status(500).json({ errormessage: 'Failed to fetch products'});
+//   }
+// });
+
+
+
 app.post('/products', async (req, res) => {
   try {
-    const {productType, locationName, fromDateTime, toDateTime, price}=await req.body;
-    const query={};
-    if(productType) query.productType=productType;
-    if(locationName) query.locationName=locationName;
-    if(fromDateTime) query.fromDateTime={ $lte: new Date(fromDateTime) };
-    if(toDateTime) query.toDateTime= { $gte: new Date(toDateTime) };
-    if(price) query.price={$lte : price};
-    query.expired=false;
+    const { productType, locationName, fromDateTime, toDateTime, price } = req.body;
+
+    const query = { expired: false };
+    if (productType) query.productType = productType;
+    if (locationName) query.locationName = locationName;
+    if (fromDateTime) query.fromDateTime = { $lte: new Date(fromDateTime) };
+    if (toDateTime) query.toDateTime = { ...query.toDateTime, $gte: new Date(toDateTime) };
+    if (price) query.price = { $lte: price };
+
+    const cacheKey = JSON.stringify(query);
+
+    // Check Redis for cached IDs
+    const cachedIds = await client.get(cacheKey);
+    if (cachedIds) {
+      console.log('🧠 Cache hit! Fetching products by ID');
+      const productIds = JSON.parse(cachedIds);
+      const products = await Product.find({ _id: { $in: productIds } });
+      return res.status(200).json(products);
+    }
+
+    // If not in cache, query DB
     const products = await Product.find(query);
+    const productIds = products.map(p => p._id);
+
+    // Cache IDs only
+    await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 });
+    console.log('💾 DB hit. Cached product IDs');
+
     res.status(200).json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
-    res.status(500).json({ errormessage: 'Failed to fetch products'});
+    res.status(500).json({ errormessage: 'Failed to fetch products' });
   }
 });
+
 
 app.post('/checkconflict', async (req, res) => {
   try {
@@ -1651,32 +1692,99 @@ app.get("/api/dashboard/categories-cat", async (req, res) => {
 // });
 
 
-app.post("/home/postreview",async(req,res)=>{
+// app.post("/home/postreview",async(req,res)=>{
+//   try {
+//     const userid = req.cookies.user_id;
+//     if (userid) {
+//     const {text, rating } = req.body;
+//     const x= await User.findById(userid);
+//     if (!text || !rating) return res.status(400).send("Missing required fields");
+//     const username=x.username;
+//     const newReview = new Review({username, text, rating });
+//     await newReview.save();
+//     res.status(200).json({message:"review suceesfully sent !"});
+//     }else {
+//       // Send a 401 response if user is not authenticated
+//       return res.status(401).json({message: "User not authenticated"});
+//     }
+//   } catch (err) {
+//     res.status(500).json({message:err.message});
+//   }
+// })
+app.post("/home/postreview", async (req, res) => {
   try {
     const userid = req.cookies.user_id;
-    if (userid) {
-    const {text, rating } = req.body;
-    const x= await User.findById(userid);
-    if (!text || !rating) return res.status(400).send("Missing required fields");
-    const username=x.username;
-    const newReview = new Review({username, text, rating });
-    await newReview.save();
-    res.status(200).json({message:"review suceesfully sent !"});
-    }else {
-      // Send a 401 response if user is not authenticated
-      return res.status(401).json({message: "User not authenticated"});
+    if (!userid) {
+      return res.status(401).json({ message: "User not authenticated" });
     }
+
+    const { text, rating } = req.body;
+    if (!text || !rating) return res.status(400).send("Missing required fields");
+
+    const user = await User.findById(userid);
+    const username = user.username;
+    const newReview = new Review({ username, text, rating });
+    await newReview.save();
+
+    // 🔄 Smart cache invalidation
+    const cacheKey = "top_5_unique_reviews";
+    const cached = await client.get(cacheKey);
+
+    if (cached) {
+      const currentTop = JSON.parse(cached);
+      const userExists = currentTop.some(r => r.username === username);
+      const minRating = Math.min(...currentTop.map(r => r.rating));
+
+      if (!userExists || rating > minRating) {
+        await client.del(cacheKey);
+        console.log("🧹 Top review cache invalidated");
+      }
+    }
+
+    res.status(200).json({ message: "Review successfully sent!" });
   } catch (err) {
-    res.status(500).json({message:err.message});
+    res.status(500).json({ message: err.message });
   }
-})
-app.get("/home/getreviews",async(req,res)=>{
+});
+
+// app.get("/home/getreviews",async(req,res)=>{
+//   try {
+//     const reviews = await Review.find();
+//     res.status(200).json({reviews:reviews});
+//   } catch (err) {
+//     res.status(500).json({message:err.message});}
+// })
+
+app.get("/home/getreviews", async (req, res) => {
+  const cacheKey = "top_5_unique_reviews";
   try {
-    const reviews = await Review.find();
-    res.status(200).json({reviews:reviews});
+    const cached = await client.get(cacheKey);
+    if (cached) {
+      console.log("🧠 Serving top reviews from cache");
+      return res.status(200).json({ reviews: JSON.parse(cached) });
+    }
+
+    const reviews = await Review.find().sort({ rating: -1 });
+    const topReviews = [];
+    const seenUsers = new Set();
+
+    for (const review of reviews) {
+      if (!seenUsers.has(review.username)) {
+        topReviews.push(review);
+        seenUsers.add(review.username);
+      }
+      if (topReviews.length === 5) break;
+    }
+
+    await client.set(cacheKey, JSON.stringify(topReviews), { EX: 3600 });
+    console.log("💾 Cached top reviews");
+    res.status(200).json({ reviews: topReviews });
   } catch (err) {
-    res.status(500).json({message:err.message});}
-})
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 app.post("/send-email", async (req, res) => {
   const { to, subject, text } = req.body;
 

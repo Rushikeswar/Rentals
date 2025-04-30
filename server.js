@@ -38,11 +38,11 @@ connecttomongodb(url)
   });
 
 
-
-  await User.syncIndexes();
-  await Booking.syncIndexes();
-  await Manager.syncIndexes();
-  await Admin.syncIndexes();
+// Run only once for index syncing after modifications 
+  // await User.syncIndexes();
+  // await Booking.syncIndexes();
+  // await Manager.syncIndexes();
+  // await Admin.syncIndexes();
 
 //middlewares
 

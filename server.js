@@ -37,7 +37,15 @@ connecttomongodb(url)
     console.error('Failed to connect to MongoDB', err);
   });
 
+
+
+  await User.syncIndexes();
+  await Booking.syncIndexes();
+  await Manager.syncIndexes();
+  await Admin.syncIndexes();
+
 //middlewares
+
 
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -1654,6 +1662,9 @@ app.post("/home/postreview",async(req,res)=>{
     const newReview = new Review({username, text, rating });
     await newReview.save();
     res.status(200).json({message:"review suceesfully sent !"});
+    }else {
+      // Send a 401 response if user is not authenticated
+      return res.status(401).json({message: "User not authenticated"});
     }
   } catch (err) {
     res.status(500).json({message:err.message});
@@ -1762,3 +1773,4 @@ const PORT =3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+export default app;

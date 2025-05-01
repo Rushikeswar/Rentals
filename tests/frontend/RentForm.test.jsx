@@ -38,7 +38,7 @@ describe('RentForm Render Tests', () => {
   });
 
   test('should render form heading', () => {
-    expect(screen.getByText('Rent Form')).toBeInTheDocument();
+    expect(screen.getByText('Lend Form')).toBeInTheDocument();
   });
 
   test('should render all input fields and labels', () => {

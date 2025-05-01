@@ -256,7 +256,7 @@ const RentForm = () => {
                         <option value="cycles">CYCLE</option>
                     </select>
 
-                    <label htmlFor="ProductName">ProductName</label>
+                    <label htmlFor="productName">ProductName</label>
                     <input
                         type="text"
                         id="productName"

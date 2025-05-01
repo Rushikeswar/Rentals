@@ -6,14 +6,14 @@ import bcrypt from 'bcrypt';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 // Import models using your specific paths
-import { connecttomongodb } from '../backend/models/connect.js';
-import { User } from '../backend/models/UserSchema.js';
-import { Product } from '../backend/models/ProductSchema.js';
-import { Booking } from '../backend/models/Bookings.js';
-import { Manager } from '../backend/models/ManagerSchema.js';
-import { Location } from '../backend/models/Location.js';
-import { Admin } from '../backend/models/Admin.js';
-import { Review } from '../backend/models/ReviewSchema.js';
+import { connecttomongodb } from '../../backend/models/connect.js';
+import { User } from '../../backend/models/UserSchema.js';
+import { Product } from '../../backend/models/ProductSchema.js';
+import { Booking } from '../../backend/models/Bookings.js';
+import { Manager } from '../../backend/models/ManagerSchema.js';
+import { Location } from '../../backend/models/Location.js';
+import { Admin } from '../../backend/models/Admin.js';
+import { Review } from '../../backend/models/ReviewSchema.js';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';

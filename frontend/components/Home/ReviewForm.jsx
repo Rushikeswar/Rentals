@@ -71,7 +71,7 @@ export const ReviewForm = ({ onSubmitSuccess }) => {
     <section
       className={`review-form-container  hero-description`} // Apply fade-in when in view
     >         <h2>Submit Your Review</h2>
-      <form onSubmit={handleSubmit} className={`review-form hero-description ${isVisible ? "fade-in" : ""}`}  id="review-form">
+      <form onSubmit={handleSubmit} className={`review-form hero-description ${isVisible ? "fade-in" : ""}`}  id="review-form" data-testid="review-form">
         <div className="textarea-container hero-description">
           <textarea
             value={review}

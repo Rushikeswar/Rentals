@@ -5,6 +5,10 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import client from './redisClient.js';
+
+import swaggerUi from 'swagger-ui-express';
+import { specs } from './config/swagger.config.js';
+
 import { connecttomongodb } from './backend/models/connect.js';
 import { User } from './backend/models/UserSchema.js';
 import {Product} from './backend/models/ProductSchema.js';
@@ -66,6 +70,8 @@ app.use(express.urlencoded({limit:'50mb', extended: true }));
 app.use(cookieParser());
 app.use(bodyParser.json({limit:'50mb'}));
 app.use(helmet());
+
+
 
 // app.use(bodyParser.json({ limit: '50mb' }));
 morgan.token("username", (req) => req.username || "Unknown");
@@ -2061,6 +2067,8 @@ app.get("/grabCustomernameProductId", async (req, res) => {
 
 
 
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 
 

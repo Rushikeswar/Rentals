@@ -414,64 +414,154 @@ app.post('/product/:product_id',async(req,res)=>{
     }
 })
 
-app.post('/booking',async (req,res)=>{
-  try{
-  const {product_id,fromDateTime,toDateTime,price}=await req.body;
-  const bookingDate=new Date();
+// app.post('/booking',async (req,res)=>{
+//   try{
+//   const {product_id,fromDateTime,toDateTime,price}=await req.body;
+//   const bookingDate=new Date();
 
-  const buyerid=req.cookies.user_id;
-  if (!buyerid || !/^[0-9a-fA-F]{24}$/.test(buyerid)) {
-    return res.status(400).json({ message: "Invalid buyer ID format!" });
+//   const buyerid=req.cookies.user_id;
+//   if (!buyerid || !/^[0-9a-fA-F]{24}$/.test(buyerid)) {
+//     return res.status(400).json({ message: "Invalid buyer ID format!" });
+//   }
+
+//   const from = new Date(fromDateTime);
+//   const to = new Date(toDateTime);
+
+//   const conflict = await Booking.findOne({
+//     product_id,
+//     $or: [
+//         { fromDateTime: { $lt: to }, toDateTime: { $gt: from } }
+//     ],
+// });
+// if(conflict)
+// {
+//     return res.status(401).json({message:"Not available"});
+// }
+//   const newbooking = new Booking({
+//     product_id,
+//     buyerid,
+//     fromDateTime,
+//     toDateTime,
+//     price,
+//     bookingDate,
+//   });
+//   const y=await newbooking.save();
+//   const newbookingid=newbooking._id.toString(); 
+//   const x=await User.findOneAndUpdate({_id:buyerid},{$push:{bookings:newbookingid}},{new:true});
+//   if(!y)
+//   {console.log("booking ot successful")
+//     return res.status(401).json({message:"booking not successful !"})
+//   }
+//   else if(!x)
+//   { console.log("couldnt update booking")
+//     return res.status(401).json({ message: "Couldn't update the booking!" });
+//   }
+//   const product = await Product.findById(product_id);
+//   product.bookingdates.push([new Date(fromDateTime),new Date(toDateTime)]);
+//   await product.save();
+
+//   const z=await User.findOneAndUpdate({_id:product.userid},{$push:{notifications:{message:newbookingid,seen:false}}},{new:true})
+//   await z.save();
+
+//   const Managernotify=await Manager.findOneAndUpdate({branch:product.locationName},{$push:{bookingnotifications:{bookingid:y._id}}},{new:true});
+//   res.status(200).json({message:"Booking successful !"});
+//   console.log("booking successful !");
+//   }
+//   catch(error){
+//     console.log(error);
+//     res.status(500).json({message:"server error !"});
+//   }
+// })
+app.post('/booking', async (req, res) => {
+  try {
+    const { product_id, fromDateTime, toDateTime, price } = req.body;
+    const bookingDate = new Date();
+    const buyerid = req.cookies.user_id;
+
+    if (!buyerid || !/^[0-9a-fA-F]{24}$/.test(buyerid)) {
+      return res.status(400).json({ message: "Invalid buyer ID format!" });
+    }
+
+    const from = new Date(fromDateTime);
+    const to = new Date(toDateTime);
+
+    const conflict = await Booking.findOne({
+      product_id,
+      $or: [{ fromDateTime: { $lt: to }, toDateTime: { $gt: from } }],
+    });
+
+    if (conflict) {
+      return res.status(401).json({ message: "Not available" });
+    }
+
+    const newbooking = new Booking({
+      product_id,
+      buyerid,
+      fromDateTime,
+      toDateTime,
+      price,
+      bookingDate,
+    });
+
+    const savedBooking = await newbooking.save();
+    const newBookingId = savedBooking._id.toString();
+
+    const updatedUser = await User.findByIdAndUpdate(
+      buyerid,
+      { $push: { bookings: newBookingId } },
+      { new: true }
+    );
+
+    if (!savedBooking || !updatedUser) {
+      return res.status(401).json({ message: "Booking not successful!" });
+    }
+
+    const product = await Product.findById(product_id);
+    product.bookingdates.push([from, to]);
+    await product.save();
+
+    // 🔔 Push notification to seller (product.userid)
+    const notificationObj = { message: newBookingId, seen: false };
+    await User.findByIdAndUpdate(product.userid, {
+      $push: { notifications: notificationObj },
+    });
+
+    // 🧠 Update Redis cache for seller's notifications (if exists)
+    const notifCacheKey = `user:${product.userid}:notifications`;
+    const cachedNotif = await client.get(notifCacheKey);
+    if (cachedNotif) {
+      const parsed = JSON.parse(cachedNotif);
+      parsed.push(notificationObj);
+      await client.set(notifCacheKey, JSON.stringify(parsed), { EX: 300 }); // keep TTL as before
+      console.log('🔄 Redis cache updated for seller notifications');
+    }
+
+    await Manager.findOneAndUpdate(
+      { branch: product.locationName },
+      { $push: { bookingnotifications: { bookingid: savedBooking._id } } }
+    );
+
+    // ✅ Update Redis cache for the buyer's bookings/products
+    const cacheKey = `user_bookings_ids:${buyerid}`;
+    const cached = await client.get(cacheKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      const updatedCache = {
+        bookingIds: [...new Set([...parsed.bookingIds, newBookingId])],
+        productIds: [...new Set([...parsed.productIds, product_id.toString()])]
+      };
+      await client.set(cacheKey, JSON.stringify(updatedCache), { EX: 3600 });
+      console.log('🧠 Redis cache updated for user:', buyerid);
+    }
+
+    res.status(200).json({ message: "Booking successful!" });
+    console.log("✅ Booking successful!");
+
+  } catch (error) {
+    console.error("❌ Booking error:", error);
+    res.status(500).json({ message: "Server error!" });
   }
-
-  const from = new Date(fromDateTime);
-  const to = new Date(toDateTime);
-
-  const conflict = await Booking.findOne({
-    product_id,
-    $or: [
-        { fromDateTime: { $lt: to }, toDateTime: { $gt: from } }
-    ],
 });
-if(conflict)
-{
-    return res.status(401).json({message:"Not available"});
-}
-  const newbooking = new Booking({
-    product_id,
-    buyerid,
-    fromDateTime,
-    toDateTime,
-    price,
-    bookingDate,
-  });
-  const y=await newbooking.save();
-  const newbookingid=newbooking._id.toString(); 
-  const x=await User.findOneAndUpdate({_id:buyerid},{$push:{bookings:newbookingid}},{new:true});
-  if(!y)
-  {console.log("booking ot successful")
-    return res.status(401).json({message:"booking not successful !"})
-  }
-  else if(!x)
-  { console.log("couldnt update booking")
-    return res.status(401).json({ message: "Couldn't update the booking!" });
-  }
-  const product = await Product.findById(product_id);
-  product.bookingdates.push([new Date(fromDateTime),new Date(toDateTime)]);
-  await product.save();
-
-  const z=await User.findOneAndUpdate({_id:product.userid},{$push:{notifications:{message:newbookingid,seen:false}}},{new:true})
-  await z.save();
-
-  const Managernotify=await Manager.findOneAndUpdate({branch:product.locationName},{$push:{bookingnotifications:{bookingid:y._id}}},{new:true});
-  res.status(200).json({message:"Booking successful !"});
-  console.log("booking successful !");
-  }
-  catch(error){
-    console.log(error);
-    res.status(500).json({message:"server error !"});
-  }
-})
 
 
 app.get("/grabAdmin", async (req, res) => {
@@ -638,39 +728,91 @@ app.post('/api/addBranch', async (req, res) => {
 
 // })
 
+
 app.get("/grabBookings", async (req, res) => {
   try {
-    if (req.cookies.user_id) {
-      const userid = req.cookies.user_id;
-  
-      const exist_user = await User.findOne({ _id: userid });
-  
-      if (exist_user) {
-        const bookingIds = exist_user.bookings;
-        const bookings = await Booking.find({ _id: { $in: bookingIds } });
-  
-        if (bookings.length > 0) {
-          const productIds = bookings.map(booking => booking.product_id);
-          const products = await Product.find({ _id: { $in: productIds } });
-  
-          res.json({
-            BookingDetails: bookings,
-            ProductDetails: products,
-          });
-        } else {
-          res.status(404).json({ message: "No booking details found for this user" });
-        }
-      } else {
-        res.status(404).json({ message: "User not found" });
-      }
-    } else {
-      res.status(400).json({ message: "No userid cookie found" });
+    const userId = req.cookies.user_id;
+    if (!userId) {
+      return res.status(400).json({ message: "No userid cookie found" });
     }
+
+    const cacheKey = `user_bookings_ids:${userId}`;
+    const cached = await client.get(cacheKey);
+
+    let bookingIds = [];
+    let productIds = [];
+
+    if (cached) {
+      console.log('✅ Serving Booking IDs from Redis cache');
+      const parsed = JSON.parse(cached);
+      bookingIds = parsed.bookingIds;
+      productIds = parsed.productIds;
+    } else {
+      console.log('💾 Fetching Booking/Product IDs from DB');
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      bookingIds = user.bookings;
+      const bookings = await Booking.find({ _id: { $in: bookingIds } });
+      productIds = bookings.map(b => b.product_id);
+
+      // Save just the IDs to cache
+      await client.set(cacheKey, JSON.stringify({ bookingIds, productIds }), { EX: 3600 });
+    }
+
+    // Fetch full documents from DB using IDs
+    const bookings = await Booking.find({ _id: { $in: bookingIds } });
+    const products = await Product.find({ _id: { $in: productIds } });
+
+    if (!bookings.length) {
+      return res.status(404).json({ message: "No booking details found for this user" });
+    }
+
+    res.json({
+      BookingDetails: bookings,
+      ProductDetails: products,
+    });
+
   } catch (err) {
+    console.error("❌ Error:", err);
     res.status(500).json({ message: "An error occurred", error: err.message });
   }
-  
 });
+// app.get("/grabBookings", async (req, res) => {
+//   try {
+//     if (req.cookies.user_id) {
+//       const userid = req.cookies.user_id;
+  
+//       const exist_user = await User.findOne({ _id: userid });
+  
+//       if (exist_user) {
+//         const bookingIds = exist_user.bookings;
+//         const bookings = await Booking.find({ _id: { $in: bookingIds } });
+  
+//         if (bookings.length > 0) {
+//           const productIds = bookings.map(booking => booking.product_id);
+//           const products = await Product.find({ _id: { $in: productIds } });
+  
+//           res.json({
+//             BookingDetails: bookings,
+//             ProductDetails: products,
+//           });
+//         } else {
+//           res.status(404).json({ message: "No booking details found for this user" });
+//         }
+//       } else {
+//         res.status(404).json({ message: "User not found" });
+//       }
+//     } else {
+//       res.status(400).json({ message: "No userid cookie found" });
+//     }
+//   } catch (err) {
+//     res.status(500).json({ message: "An error occurred", error: err.message });
+//   }
+  
+// });
 
 app.post("/settings", async (req, res) => {
   try {
@@ -741,33 +883,78 @@ app.get("/grabDetails", async (req, res,next) => {
  
 });
 
+// app.get("/grabRentals", async (req, res) => {
+//   try {
+//     if (req.cookies.user_id) {
+//       const userid = req.cookies.user_id;
+//       const exist_user = await User.findOne({ _id: userid });
+
+//       if (exist_user) {
+//         const productIds = exist_user.rentals;
+//         const products = await Product.find({ _id: { $in: productIds },expired:false });
+//         // products = products.filter((product)=>product.expired);
+
+//         if (products.length > 0) {
+//           const obj = { rentedProducts: products };
+//           res.json(obj);
+//         } else {
+//           res.status(200).json({ message: "No rented products found" });
+//         }
+//       } else {
+//         res.status(404).json({ message: "User not found" });
+//       }
+//     } else {
+//       res.status(400).json({ message: "No username cookie found" });
+//     }
+//   } catch (err) {
+//     res.status(500).json({ message: "An error occurred", error: err.message });
+//   }
+// });
+
 app.get("/grabRentals", async (req, res) => {
   try {
-    if (req.cookies.user_id) {
-      const userid = req.cookies.user_id;
-      const exist_user = await User.findOne({ _id: userid });
-
-      if (exist_user) {
-        const productIds = exist_user.rentals;
-        const products = await Product.find({ _id: { $in: productIds },expired:false });
-        // products = products.filter((product)=>product.expired);
-
-        if (products.length > 0) {
-          const obj = { rentedProducts: products };
-          res.json(obj);
-        } else {
-          res.status(200).json({ message: "No rented products found" });
-        }
-      } else {
-        res.status(404).json({ message: "User not found" });
-      }
-    } else {
-      res.status(400).json({ message: "No username cookie found" });
+    if (!req.cookies.user_id) {
+      return res.status(400).json({ message: "No user_id cookie found" });
     }
+
+    const userid = req.cookies.user_id;
+    const cacheKey = `user:${userid}:rentals`;
+
+    // Try to get rental product IDs from Redis
+    const cachedRentalIds = await client.get(cacheKey);
+
+    let productIds;
+
+    if (cachedRentalIds) {
+      // Cache HIT
+      console.log("🔁 Rentals served from Redis");
+      productIds = JSON.parse(cachedRentalIds);
+    } else {
+      // Cache MISS: fetch from DB
+      const user = await User.findById(userid);
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      productIds = user.rentals || [];
+
+      // Save rental product IDs in Redis
+      await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 }); // cache for 1 hour
+    }
+
+    // Fetch the actual products from DB
+    const products = await Product.find({ _id: { $in: productIds }, expired: false });
+
+    if (!products || products.length === 0) {
+      return res.status(200).json({ message: "No rented products found" });
+    }
+
+    res.status(200).json({ rentedProducts: products });
+
   } catch (err) {
+    console.error("Error in /grabRentals:", err);
     res.status(500).json({ message: "An error occurred", error: err.message });
   }
 });
+
 
 app.post('/signOut', async (req, res) => {
   try {

@@ -313,41 +313,101 @@ app.post('/RentForm', async (req, res) => {
   }
 });
 
-
+// correct one
 // app.post('/products', async (req, res) => {
 //   try {
-//     const {productType, locationName, fromDateTime, toDateTime, price}=await req.body;
-//     const query={};
-//     if(productType) query.productType=productType;
-//     if(locationName) query.locationName=locationName;
-//     if(fromDateTime) query.fromDateTime={ $lte: new Date(fromDateTime) };
-//     if(toDateTime) query.toDateTime= { $gte: new Date(toDateTime) };
-//     if(price) query.price={$lte : price};
-//     query.expired=false;
+//     const { productType, locationName, fromDateTime, toDateTime, price } = req.body;
+
+//     const query = { expired: false };
+//     if (productType) query.productType = productType;
+//     if (locationName) query.locationName = locationName;
+//     if (fromDateTime) query.fromDateTime = { $lte: new Date(fromDateTime) };
+//     if (toDateTime) query.toDateTime = { ...query.toDateTime, $gte: new Date(toDateTime) };
+//     if (price) query.price = { $lte: price };
+
+//     const cacheKey = JSON.stringify(query);
+
+//     // Check Redis for cached IDs
+//     const cachedIds = await client.get(cacheKey);
+//     if (cachedIds) {
+//       console.log('🧠 Cache hit! Fetching products by ID');
+//       const productIds = JSON.parse(cachedIds);
+//       const products = await Product.find({ _id: { $in: productIds } });
+//       return res.status(200).json(products);
+//     }
+
+//     // If not in cache, query DB
 //     const products = await Product.find(query);
+//     const productIds = products.map(p => p._id);
+
+//     // Cache IDs only
+//     await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 });
+//     console.log('💾 DB hit. Cached product IDs');
+
 //     res.status(200).json(products);
 //   } catch (error) {
 //     console.error('Error fetching products:', error);
-//     res.status(500).json({ errormessage: 'Failed to fetch products'});
+//     res.status(500).json({ errormessage: 'Failed to fetch products' });
 //   }
 // });
 
+app.get('/autocomplete', async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query || query.length < 2) {
+      return res.status(400).json({ error: 'Query must be at least 2 characters' });
+    }
+
+    const cacheKey = `autocomplete:${query.toLowerCase()}`;
+    
+    // Try to get from cache
+    const cachedResults = await client.get(cacheKey);
+    if (cachedResults) {
+      console.log('🧠 Autocomplete cache hit');
+      return res.json(JSON.parse(cachedResults));
+    }
+
+    // Query database
+    const suggestions = await Product.find({
+      productName: { $regex: `^${query}`, $options: 'i' },
+      expired: false
+    })
+    .select('productName _id')
+    .limit(10)
+    .sort({ uploadDate: -1 });
+
+    // Cache results for 15 minutes
+    await client.set(cacheKey, JSON.stringify(suggestions), { EX: 900 });
+    console.log('💾 Cached autocomplete results');
+
+    res.json(suggestions);
+  } catch (error) {
+    console.error('Autocomplete error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 app.post('/products', async (req, res) => {
   try {
-    const { productType, locationName, fromDateTime, toDateTime, price } = req.body;
+    const { productType, locationName, fromDateTime, toDateTime, price, searchQuery } = req.body;
 
+    // Build base query
     const query = { expired: false };
     if (productType) query.productType = productType;
     if (locationName) query.locationName = locationName;
     if (fromDateTime) query.fromDateTime = { $lte: new Date(fromDateTime) };
     if (toDateTime) query.toDateTime = { ...query.toDateTime, $gte: new Date(toDateTime) };
     if (price) query.price = { $lte: price };
+    
+    // Add text search if searchQuery exists
+    if (searchQuery) {
+      query.productName = { $regex: searchQuery, $options: 'i' };
+    }
 
     const cacheKey = JSON.stringify(query);
 
-    // Check Redis for cached IDs
+    // Check Redis cache
     const cachedIds = await client.get(cacheKey);
     if (cachedIds) {
       console.log('🧠 Cache hit! Fetching products by ID');
@@ -357,10 +417,13 @@ app.post('/products', async (req, res) => {
     }
 
     // If not in cache, query DB
-    const products = await Product.find(query);
+    const products = await Product.find(query)
+      .sort({ uploadDate: -1 }) // Sort by newest first
+      .limit(50); // Limit results
+
     const productIds = products.map(p => p._id);
 
-    // Cache IDs only
+    // Cache results for 1 hour
     await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 });
     console.log('💾 DB hit. Cached product IDs');
 
@@ -370,7 +433,6 @@ app.post('/products', async (req, res) => {
     res.status(500).json({ errormessage: 'Failed to fetch products' });
   }
 });
-
 
 app.post('/checkconflict', async (req, res) => {
   try {
@@ -401,7 +463,6 @@ app.post('/checkconflict', async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
 
 
 app.post('/product/:product_id',async(req,res)=>{

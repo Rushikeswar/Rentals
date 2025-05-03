@@ -5,7 +5,8 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import client from './redisClient.js';
-
+import dotenv from 'dotenv';
+dotenv.config();
 import swaggerUi from 'swagger-ui-express';
 import { specs } from './config/swagger.config.js';
 
@@ -34,10 +35,10 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const url='mongodb://localhost:27017/Rentals';
+const url=process.env.MONGODB_URL;
 const app = express();
 connecttomongodb(url)
-  .then(() => console.log('Connected to MongoDB'))
+  .then(() => console.log('Connected to MongoDB Atlas !'))
   .catch(err => {
     console.error('Failed to connect to MongoDB', err);
   });
@@ -48,6 +49,7 @@ connecttomongodb(url)
   // await Booking.syncIndexes();
   // await Manager.syncIndexes();
   // await Admin.syncIndexes();
+  // await Product.syncIndexes();
 
 //middlewares
 
@@ -391,49 +393,62 @@ app.get('/autocomplete', async (req, res) => {
 app.post('/products', async (req, res) => {
   try {
     const { productType, locationName, fromDateTime, toDateTime, price, searchQuery } = req.body;
-
+    
     // Build base query
     const query = { expired: false };
     if (productType) query.productType = productType;
     if (locationName) query.locationName = locationName;
     if (fromDateTime) query.fromDateTime = { $lte: new Date(fromDateTime) };
-    if (toDateTime) query.toDateTime = { ...query.toDateTime, $gte: new Date(toDateTime) };
-    if (price) query.price = { $lte: price };
+    if (toDateTime) query.toDateTime = { $gte: new Date(toDateTime) };
+    if (price) query.price = { $lte: parseFloat(price) };
     
     // Add text search if searchQuery exists
     if (searchQuery) {
       query.productName = { $regex: searchQuery, $options: 'i' };
     }
-
+    
     const cacheKey = JSON.stringify(query);
-
+    
     // Check Redis cache
     const cachedIds = await client.get(cacheKey);
     if (cachedIds) {
       console.log('🧠 Cache hit! Fetching products by ID');
       const productIds = JSON.parse(cachedIds);
-      const products = await Product.find({ _id: { $in: productIds } });
+      
+      // Fixed: removed extra semicolon and moved allowDiskUse to correct position
+      const products = await Product.find({ _id: { $in: productIds } })
+        .sort({ uploadDate: -1 })
+        .allowDiskUse(true);
+        
       return res.status(200).json(products);
     }
-
+    
     // If not in cache, query DB
-    const products = await Product.find(query)
-      .sort({ uploadDate: -1 }) // Sort by newest first
-      .limit(50); // Limit results
-
+    console.log('💽 Cache miss! Querying database directly');
+    
+    // Use aggregation pipeline with allowDiskUse for better performance with sorting
+    const products = await Product.aggregate([
+      { $match: query },
+      { $sort: { uploadDate: -1 } },
+      { $limit: 50 }
+    ], { allowDiskUse: true });
+    
+    if (products.length === 0) {
+      return res.status(200).json([]);
+    }
+    
     const productIds = products.map(p => p._id);
-
+    
     // Cache results for 1 hour
     await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 });
     console.log('💾 DB hit. Cached product IDs');
-
+    
     res.status(200).json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
-    res.status(500).json({ errormessage: 'Failed to fetch products' });
+    res.status(500).json({ errormessage: 'Failed to fetch products', details: error.message });
   }
 });
-
 app.post('/checkconflict', async (req, res) => {
   try {
       const { product_id, fromDateTime, toDateTime } = req.body;
@@ -2013,8 +2028,8 @@ app.get("/home/getreviews", async (req, res) => {
   const cacheKey = "top_5_unique_reviews";
   try {
     const cached = await client.get(cacheKey);
-    if (cached) {
-      console.log("🧠 Serving top reviews from cache");
+    if (cached.length !==0) {
+      console.log("Serving top reviews from cache");
       return res.status(200).json({ reviews: JSON.parse(cached) });
     }
 

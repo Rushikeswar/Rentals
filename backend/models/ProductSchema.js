@@ -19,5 +19,15 @@ const ProductSchema= new mongoose.Schema({
     bookingIds:{type:[String]},
     expired:{type:Boolean,require:true,}
 });
+
+
+ProductSchema.index({ uploadDate: -1 });
+ProductSchema.index({ productType: 1 });
+ProductSchema.index({ locationName: 1 });
+ProductSchema.index({ productName: "text" });
+// Also consider indexing these frequently queried fields
+ProductSchema.index({ expired: 1 });
+ProductSchema.index({ userid: 1 });
+
 const Product = mongoose.model("Products",ProductSchema);
 export {Product}

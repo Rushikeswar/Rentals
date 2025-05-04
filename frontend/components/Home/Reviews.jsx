@@ -39,7 +39,8 @@ export const Reviews = ({ refreshKey }) => {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/home/getreviews`);
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/home/getreviews`);
       if (!response.ok) {
         throw new Error("Failed to fetch reviews");
       }

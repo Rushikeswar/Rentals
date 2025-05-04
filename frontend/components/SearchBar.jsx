@@ -43,7 +43,7 @@ const SearchBar = ({ setsearchinput }) => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `http://localhost:3000/autocomplete?query=${encodeURIComponent(input)}`,
+          `${import.meta.env.VITE_BACKEND_URL}/autocomplete?query=${encodeURIComponent(input)}`,
           { credentials: 'include' }
         );
 

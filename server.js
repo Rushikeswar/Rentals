@@ -52,9 +52,10 @@ connecttomongodb(MONGODB_URL)
 //   await Product.syncIndexes();
 //middlewares
 
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: FRONTEND_URL,
   credentials: true,
 }));//cross-origin resource sharing
 

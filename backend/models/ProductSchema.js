@@ -28,6 +28,7 @@ ProductSchema.index({ productName: "text" });
 // Also consider indexing these frequently queried fields
 ProductSchema.index({ expired: 1 });
 ProductSchema.index({ userid: 1 });
+ProductSchema.index({ expired: 1, productType: 1, locationName: 1, fromDateTime: 1, toDateTime: 1, price: 1 });
 
 const Product = mongoose.model("Products",ProductSchema);
 export {Product}

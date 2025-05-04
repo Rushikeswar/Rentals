@@ -410,18 +410,18 @@ app.post('/products', async (req, res) => {
     const cacheKey = JSON.stringify(query);
     
     // Check Redis cache
-    const cachedIds = await client.get(cacheKey);
-    if (cachedIds) {
-      console.log('🧠 Cache hit! Fetching products by ID');
-      const productIds = JSON.parse(cachedIds);
+    // const cachedIds = await client.get(cacheKey);
+    // if (cachedIds) {
+    //   console.log('🧠 Cache hit! Fetching products by ID');
+    //   const productIds = JSON.parse(cachedIds);
       
-      // Fixed: removed extra semicolon and moved allowDiskUse to correct position
-      const products = await Product.find({ _id: { $in: productIds } })
-        .sort({ uploadDate: -1 })
-        .allowDiskUse(true);
+    //   // Fixed: removed extra semicolon and moved allowDiskUse to correct position
+    //   const products = await Product.find({ _id: { $in: productIds } })
+    //     .sort({ uploadDate: -1 })
+    //     .allowDiskUse(true);
         
-      return res.status(200).json(products);
-    }
+    //   return res.status(200).json(products);
+    // }
     
     // If not in cache, query DB
     console.log('💽 Cache miss! Querying database directly');
@@ -440,8 +440,8 @@ app.post('/products', async (req, res) => {
     const productIds = products.map(p => p._id);
     
     // Cache results for 1 hour
-    await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 });
-    console.log('💾 DB hit. Cached product IDs');
+    // await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 });
+    // console.log('💾 DB hit. Cached product IDs');
     
     res.status(200).json(products);
   } catch (error) {
@@ -819,17 +819,18 @@ app.get("/grabBookings", async (req, res) => {
     }
 
     const cacheKey = `user_bookings_ids:${userId}`;
-    const cached = await client.get(cacheKey);
+    // const cached = await client.get(cacheKey);
 
     let bookingIds = [];
     let productIds = [];
 
-    if (cached) {
-      console.log('✅ Serving Booking IDs from Redis cache');
-      const parsed = JSON.parse(cached);
-      bookingIds = parsed.bookingIds;
-      productIds = parsed.productIds;
-    } else {
+    // if (cached) {
+    //   console.log('✅ Serving Booking IDs from Redis cache');
+    //   const parsed = JSON.parse(cached);
+    //   bookingIds = parsed.bookingIds;
+    //   productIds = parsed.productIds;
+    // } else
+     {
       console.log('💾 Fetching Booking/Product IDs from DB');
       const user = await User.findById(userId);
       if (!user) {
@@ -841,7 +842,7 @@ app.get("/grabBookings", async (req, res) => {
       productIds = bookings.map(b => b.product_id);
 
       // Save just the IDs to cache
-      await client.set(cacheKey, JSON.stringify({ bookingIds, productIds }), { EX: 3600 });
+      // await client.set(cacheKey, JSON.stringify({ bookingIds, productIds }), { EX: 3600 });
     }
 
     // Fetch full documents from DB using IDs
@@ -993,6 +994,7 @@ app.get("/grabDetails", async (req, res,next) => {
 //   }
 // });
 
+
 app.get("/grabRentals", async (req, res) => {
   try {
     if (!req.cookies.user_id) {
@@ -1002,16 +1004,17 @@ app.get("/grabRentals", async (req, res) => {
     const userid = req.cookies.user_id;
     const cacheKey = `user:${userid}:rentals`;
 
-    // Try to get rental product IDs from Redis
-    const cachedRentalIds = await client.get(cacheKey);
+    // // Try to get rental product IDs from Redis
+    // const cachedRentalIds = await client.get(cacheKey);
 
     let productIds;
 
-    if (cachedRentalIds) {
-      // Cache HIT
-      console.log("🔁 Rentals served from Redis");
-      productIds = JSON.parse(cachedRentalIds);
-    } else {
+    // if (cachedRentalIds) {
+    //   // Cache HIT
+    //   console.log("🔁 Rentals served from Redis");
+    //   productIds = JSON.parse(cachedRentalIds);
+    // } else
+     {
       // Cache MISS: fetch from DB
       const user = await User.findById(userid);
       if (!user) return res.status(404).json({ message: "User not found" });
@@ -1019,7 +1022,7 @@ app.get("/grabRentals", async (req, res) => {
       productIds = user.rentals || [];
 
       // Save rental product IDs in Redis
-      await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 }); // cache for 1 hour
+      // await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 }); // cache for 1 hour
     }
 
     // Fetch the actual products from DB
@@ -1508,7 +1511,6 @@ app.get("/api/dashboard/categories", async (req, res) => {
     res.status(500).json({ message: "Error fetching categories" });
   }
 });
-
 
 app.get('/locations', async (req, res) => {
   try {

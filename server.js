@@ -35,9 +35,9 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const url=process.env.MONGODB_URL;
+const MONGODB_URL=process.env.MONGODB_URL || 'mongodb://localhost:27017/Rentals';
 const app = express();
-connecttomongodb(url)
+connecttomongodb(MONGODB_URL)
   .then(() => console.log('Connected to MongoDB Atlas !'))
   .catch(err => {
     console.error('Failed to connect to MongoDB', err);
@@ -2028,11 +2028,11 @@ app.get("/home/getreviews", async (req, res) => {
   const cacheKey = "top_5_unique_reviews";
   try {
     const cached = await client.get(cacheKey);
-    if (cached.length !==0) {
+    if (cached !== null && cached.length !==0) {
       console.log("Serving top reviews from cache");
       return res.status(200).json({ reviews: JSON.parse(cached) });
     }
-
+    console.log("Fetching top reviews from database");
     const reviews = await Review.find().sort({ rating: -1 });
     const topReviews = [];
     const seenUsers = new Set();

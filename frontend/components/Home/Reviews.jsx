@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useOnScreen } from './UseOnScreen'; // Import the custom hook
-import "../../css/Home/reviews.css";
+import "../../css/Home/Reviews.css";
 
 export const Reviews = ({ refreshKey }) => {
   const [reviews, setReviews] = useState([]);

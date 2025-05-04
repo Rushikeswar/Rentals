@@ -4,12 +4,16 @@ on: [push]
 
 jobs:
   build-and-test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     services:
       mongodb:
         image: mongo:latest
         ports:
           - 27017:27017
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
 
     steps:
       # 1. Check out repository
@@ -28,7 +32,7 @@ jobs:
         run: |
           npm install
           npm install @babel/plugin-proposal-private-property-in-object --save-dev
-          $env:CI = 'false'
+          export CI=false
           npm run build
 
       # 4. Backend setup
@@ -39,6 +43,10 @@ jobs:
           
       # 5. Docker Build Test
       - name: Test Docker Builds
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          MONGODB_URL: mongodb://localhost:27017
         run: |
           docker build -f backend.Dockerfile -t test-backend .
           docker build -f frontend.Dockerfile -t test-frontend .

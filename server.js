@@ -47,10 +47,9 @@ connecttomongodb(MONGODB_URL)
 // Run only once for index syncing after modifications 
   // await User.syncIndexes();
   // await Booking.syncIndexes();
-  // await Manager.syncIndexes();
+  // await Manager.syncIndexesc();
   // await Admin.syncIndexes();
-  // await Product.syncIndexes();
-
+//   await Product.syncIndexes();
 //middlewares
 
 
@@ -307,6 +306,14 @@ app.post('/RentForm', async (req, res) => {
     exist_user.rentals.push(savedProduct._id);
     await exist_user.save();
     const notifyupdate=await Manager.findOneAndUpdate({branch:savedProduct.locationName},{$push:{notifications:{message:savedProduct._id,seen:false}}},{new:true});
+    const redisKey = `products:${productType}`;
+let cached = await client.get(redisKey);
+
+if (cached) {
+  const productList = JSON.parse(cached);
+  productList.push(savedProduct); // assuming `savedProduct` is lean-compatible or transformed
+  await client.set(redisKey, JSON.stringify(productList), { EX: 3600 });
+}
 
     res.status(201).json({ errormessage: 'Uploaded successfully'});
   } catch (error) {
@@ -390,65 +397,123 @@ app.get('/autocomplete', async (req, res) => {
 });
 
 
+// app.post('/products', async (req, res) => {
+//   try {
+//     const { productType, locationName, fromDateTime, toDateTime, price, searchQuery } = req.body;
+    
+//     // Build base query
+//     const query = { expired: false };
+//     if (productType) query.productType = productType;
+//     if (locationName) query.locationName = locationName;
+//     if (fromDateTime) query.fromDateTime = { $lte: new Date(fromDateTime) };
+//     if (toDateTime) query.toDateTime = { $gte: new Date(toDateTime) };
+//     if (price) query.price = { $lte: parseFloat(price) };
+    
+//     // Add text search if searchQuery exists
+//     if (searchQuery) {
+//       query.$text = { $search: searchQuery };  // 🔄 replaced regex with text search
+//     }
+    
+//     // const cacheKey = JSON.stringify(query);
+    
+//     // Check Redis cache
+//     // const cachedIds = await client.get(cacheKey);
+//     // if (cachedIds) {
+//     //   console.log('🧠 Cache hit! Fetching products by ID');
+//     //   const productIds = JSON.parse(cachedIds);
+      
+//     //   // Fixed: removed extra semicolon and moved allowDiskUse to correct position
+//     //   const products = await Product.find({ _id: { $in: productIds } })
+//     //     .sort({ uploadDate: -1 })
+//     //     .allowDiskUse(true);
+        
+//     //   return res.status(200).json(products);
+//     // }
+    
+//     // If not in cache, query DB
+//     console.log('💽 Cache miss! Querying database directly');
+    
+//     // Use aggregation pipeline with allowDiskUse for better performance with sorting
+//     const products = await Product.aggregate([
+//       { $match: query },
+//       { $sort: { uploadDate: -1 } },
+//       { $limit: 50 },
+//       { $project: { 
+//           productName: 1, 
+//           price: 1, 
+//           uploadDate: 1, 
+//           photo: 1, 
+//           locationName: 1,
+//           productType: 1,
+//           fromDateTime: 1,
+//           toDateTime: 1
+//         } 
+//       }
+//     ], { allowDiskUse: true });
+    
+//     if (products.length === 0) {
+//       return res.status(200).json([]);
+//     }
+    
+//     // const productIds = products.map(p => p._id);
+    
+//     // Cache results for 1 hour
+//     // await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 });
+//     // console.log('💾 DB hit. Cached product IDs');
+    
+//     res.status(200).json(products);
+//   } catch (error) {
+//     console.error('Error fetching products:', error);
+//     res.status(500).json({ errormessage: 'Failed to fetch products', details: error.message });
+//   }
+// });
+
 app.post('/products', async (req, res) => {
   try {
     const { productType, locationName, fromDateTime, toDateTime, price, searchQuery } = req.body;
-    
-    // Build base query
-    const query = { expired: false };
-    if (productType) query.productType = productType;
-    if (locationName) query.locationName = locationName;
-    if (fromDateTime) query.fromDateTime = { $lte: new Date(fromDateTime) };
-    if (toDateTime) query.toDateTime = { $gte: new Date(toDateTime) };
-    if (price) query.price = { $lte: parseFloat(price) };
-    
-    // Add text search if searchQuery exists
-    if (searchQuery) {
-      query.productName = { $regex: searchQuery, $options: 'i' };
+
+    if (!productType) {
+      return res.status(400).json({ errormessage: 'productType is required.' });
     }
-    
-    const cacheKey = JSON.stringify(query);
-    
-    // Check Redis cache
-    // const cachedIds = await client.get(cacheKey);
-    // if (cachedIds) {
-    //   console.log('🧠 Cache hit! Fetching products by ID');
-    //   const productIds = JSON.parse(cachedIds);
-      
-    //   // Fixed: removed extra semicolon and moved allowDiskUse to correct position
-    //   const products = await Product.find({ _id: { $in: productIds } })
-    //     .sort({ uploadDate: -1 })
-    //     .allowDiskUse(true);
-        
-    //   return res.status(200).json(products);
-    // }
-    
-    // If not in cache, query DB
-    console.log('💽 Cache miss! Querying database directly');
-    
-    // Use aggregation pipeline with allowDiskUse for better performance with sorting
-    const products = await Product.aggregate([
-      { $match: query },
-      { $sort: { uploadDate: -1 } },
-      { $limit: 50 }
-    ], { allowDiskUse: true });
-    
-    if (products.length === 0) {
-      return res.status(200).json([]);
+
+    const redisKey = `products:${productType}`;
+    let products = await client.get(redisKey);
+
+    if (products) {
+      console.log(`🧠 Redis cache hit: ${redisKey}`);
+      products = JSON.parse(products);
+    } else 
+    {
+      console.log(`💽 Redis cache miss: ${redisKey}. Querying MongoDB...`);
+
+      // Fetch and cache all valid products of this type
+      products = await Product.find({
+        expired: false,
+        productType,
+        toDateTime: { $gte: new Date() }
+      }).lean();
+
+      await client.set(redisKey, JSON.stringify(products), { EX: 3600 }); // Cache for 1 hour
     }
-    
-    const productIds = products.map(p => p._id);
-    
-    // Cache results for 1 hour
-    // await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 });
-    // console.log('💾 DB hit. Cached product IDs');
-    
-    res.status(200).json(products);
+
+    // 🧠 In-memory filtering
+    const filtered = products.filter(p => {
+      if (locationName && p.locationName !== locationName) return false;
+      if (fromDateTime && new Date(p.fromDateTime) > new Date(fromDateTime)) return false;
+      if (toDateTime && new Date(p.toDateTime) < new Date(toDateTime)) return false;
+      if (price && p.price > parseFloat(price)) return false;
+      if (searchQuery && !p.productName.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      return true;
+    });
+
+    res.status(200).json(filtered);
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).json({ errormessage: 'Failed to fetch products', details: error.message });
   }
 });
+
+
 app.post('/checkconflict', async (req, res) => {
   try {
       const { product_id, fromDateTime, toDateTime } = req.body;

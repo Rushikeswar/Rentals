@@ -20,15 +20,31 @@ const ProductSchema= new mongoose.Schema({
     expired:{type:Boolean,require:true,}
 });
 
+ProductSchema.index({
+  expired: 1,
+  productType: 1,
+  locationName: 1,
+  fromDateTime: 1,
+  toDateTime: 1,
+  price: 1,
+  uploadDate: -1
+});
 
-ProductSchema.index({ uploadDate: -1 });
-ProductSchema.index({ productType: 1 });
-ProductSchema.index({ locationName: 1 });
-ProductSchema.index({ productName: "text" });
-// Also consider indexing these frequently queried fields
-ProductSchema.index({ expired: 1 });
-ProductSchema.index({ userid: 1 });
-ProductSchema.index({ expired: 1, productType: 1, locationName: 1, fromDateTime: 1, toDateTime: 1, price: 1 });
+// Text search index for productName and locationName
+ProductSchema.index({
+  productName: "text",
+  locationName: "text"
+});
 
-const Product = mongoose.model("Products",ProductSchema);
-export {Product}
+// Optional: if most queries are on expired: false
+ProductSchema.index({
+  productType: 1,
+  locationName: 1,
+  fromDateTime: 1,
+  toDateTime: 1,
+  price: 1,
+  uploadDate: -1
+}, { partialFilterExpression: { expired: false } });
+
+const Product = mongoose.model("Products", ProductSchema);
+export { Product };

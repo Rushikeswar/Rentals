@@ -1,3 +1,4 @@
+import { API_URL } from "../../src/config/api";
 import React from 'react';
 import '../css/AdminPage.css';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
@@ -16,7 +17,7 @@ const AdminPage = () => {
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/signOut`, {
+      const response = await fetch(`${API_URL}/signOut`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

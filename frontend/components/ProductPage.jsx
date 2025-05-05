@@ -1,3 +1,4 @@
+import { API_URL } from "../../src/config/api";
 import React, { useEffect, useState } from 'react';
 import { useParams,useLocation,useNavigate } from 'react-router-dom';
 import Carousel from './Carousel'; // Import the Carousel component
@@ -10,7 +11,7 @@ const ProductPage = () => {
   const navigate = useNavigate();
    const fetchProduct = async (product_id) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/product/${product_id}`, {
+      const response = await fetch(`${API_URL}/product/${product_id}`, {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
       });

@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import '../../css/Admindashboardcss/Users.css';
 
@@ -16,7 +17,7 @@ const Users = () => {
   // Fetch the list of users from the server
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admindashboard/registeredusers`, {
+      const response = await fetch(`${API_URL}/admindashboard/registeredusers`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -36,7 +37,7 @@ const Users = () => {
   // Handle the deletion of a user
   const handleDelete = async (id, forceDelete = false) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admindashboard/deleteusers`, {
+      const response = await fetch(`${API_URL}/admindashboard/deleteusers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: id, forceDelete }),

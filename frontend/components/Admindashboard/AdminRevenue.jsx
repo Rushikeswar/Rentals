@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
@@ -11,8 +12,8 @@ const AdminRevenue = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const dailyRevenueRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/daily-revenue`);
-                const monthlyRevenueRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/monthly-revenue`);
+                const dailyRevenueRes = await fetch(`${API_URL}/api/dashboard/daily-revenue`);
+                const monthlyRevenueRes = await fetch(`${API_URL}/api/dashboard/monthly-revenue`);
 
                 if (!dailyRevenueRes.ok || !monthlyRevenueRes.ok) {
                     throw new Error('Network response was not ok');

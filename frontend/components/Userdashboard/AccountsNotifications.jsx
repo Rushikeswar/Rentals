@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useEffect, useState } from 'react';
 import '../../css/Userdashboardcss/AccountNotifications.css';
 
@@ -26,7 +27,7 @@ const AccountNotifications = () => {
 
     const fetchUnseenNotifications = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/notifications`, {
+            const response = await fetch(`${API_URL}/user/notifications`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -50,7 +51,7 @@ const AccountNotifications = () => {
 
     const fetchProductDetails = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/notifications/products`, {
+            const response = await fetch(`${API_URL}/user/notifications/products`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -72,7 +73,7 @@ const AccountNotifications = () => {
 
     const markAsSeen = async (id) => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/notifications/markAsSeen`, {
+            const response = await fetch(`${API_URL}/user/notifications/markAsSeen`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

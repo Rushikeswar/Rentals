@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 // YourRentals.js
 
 import React, { useEffect, useState } from 'react';
@@ -12,7 +13,7 @@ const YourRentals = () => {
   useEffect(() => {
     const fetchAccountDetails = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabRentals`, {
+        const response = await fetch(`${API_URL}/grabRentals`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"

@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useEffect, useState } from 'react';
 import "../../css/Userdashboardcss/YourRentals.css";  // Reusing YourRentals.css
 import { BsDisplay } from 'react-icons/bs';
@@ -11,7 +12,7 @@ const YourBookings = () => {
   useEffect(() => {
     const fetchAccountDetails = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabBookings`, {
+        const response = await fetch(`${API_URL}/grabBookings`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"

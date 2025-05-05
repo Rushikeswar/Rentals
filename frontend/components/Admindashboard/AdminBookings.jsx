@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import { Line, Bar, Pie } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
@@ -12,8 +13,8 @@ const AdminBookings = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const dailyBookingsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/daily-bookings`);
-        const monthlyBookingsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/monthly-bookings`);
+        const dailyBookingsRes = await fetch(`${API_URL}/api/dashboard/daily-bookings`);
+        const monthlyBookingsRes = await fetch(`${API_URL}/api/dashboard/monthly-bookings`);
 
         if (!dailyBookingsRes.ok || !monthlyBookingsRes.ok) {
           throw new Error('Network response was not ok');

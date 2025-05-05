@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
@@ -14,7 +15,7 @@ const ManagerRevenue = () => {
     useEffect(() => {
         const fetchLocation = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabBranch`, {
+                const response = await fetch(`${API_URL}/grabBranch`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
@@ -39,14 +40,14 @@ const ManagerRevenue = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const dailyRevenueRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/daily-revenue-cat`, {
+                const dailyRevenueRes = await fetch(`${API_URL}/api/dashboard/daily-revenue-cat`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     credentials: "include"
                 });
-                const monthlyRevenueRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/monthly-revenue-cat`, {
+                const monthlyRevenueRes = await fetch(`${API_URL}/api/dashboard/monthly-revenue-cat`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"

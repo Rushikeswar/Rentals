@@ -1,3 +1,4 @@
+import { API_URL } from "../../src/config/api";
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/SignupLogin.css';
@@ -22,9 +23,12 @@ const LoginForm = () => {
     e.preventDefault();
     setMessage('');
     setError(false);
-
+    const backendUrl = 
+      (window.runtimeConfig && window.runtimeConfig.BACKEND_URL) ||
+      API_URL || 
+      "http://52.66.241.102:3000";
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `${import.meta.env.VITE_BACKEND_URL}/login`, true);
+    xhr.open('POST', `${backendUrl}/login`, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.withCredentials = true;
 

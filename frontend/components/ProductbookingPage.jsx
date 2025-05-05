@@ -1,3 +1,4 @@
+import { API_URL } from "../../src/config/api";
 // import React, { useState, useEffect } from 'react';
 // import { useNavigate, useLocation, useParams } from 'react-router-dom';
 // import '../css/ProductbookingPage.css';
@@ -290,7 +291,7 @@ const ProductbookingPage = () => {
 
       const sendMailToOwner = async (to, subject, text) => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/send-email`, {
+            const response = await fetch(`${API_URL}/send-email`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ to, subject, text }),
@@ -324,7 +325,7 @@ const ProductbookingPage = () => {
         const buyerId = getCookieValue("user_id");
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/grabCustomernameProductId?userid=${buyerId}&product_id=${product_id}`,
+                `${API_URL}/grabCustomernameProductId?userid=${buyerId}&product_id=${product_id}`,
                 {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
@@ -405,7 +406,7 @@ const ProductbookingPage = () => {
         }
         else{
                 try{
-                    const response=await fetch(`${import.meta.env.VITE_BACKEND_URL}/booking`,{
+                    const response=await fetch(`${API_URL}/booking`,{
                         method:'POST',
                         headers:{'Content-Type':'application/json'},
                         body:JSON.stringify({
@@ -439,7 +440,7 @@ const ProductbookingPage = () => {
     useEffect(() => {
         const fetchreqproduct = async (product_id) => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/product/${product_id}`, {
+                const response = await fetch(`${API_URL}/product/${product_id}`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },

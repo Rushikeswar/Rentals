@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from "react";
 import { useOnScreen } from './UseOnScreen'; // Import the custom hook
 import "../../css/Home/Reviews.css";
@@ -39,7 +40,11 @@ export const Reviews = ({ refreshKey }) => {
 
   const fetchReviews = async () => {
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      
+      const backendUrl = 
+      (window.runtimeConfig && window.runtimeConfig.BACKEND_URL) ||
+      API_URL || 
+      "http://52.66.241.102:3000";
       const response = await fetch(`${backendUrl}/home/getreviews`);
       if (!response.ok) {
         throw new Error("Failed to fetch reviews");

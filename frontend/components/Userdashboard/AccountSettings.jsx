@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useEffect, useState } from "react";
 import "../../css/Userdashboardcss/AccountSettings.css";
 
@@ -20,7 +21,7 @@ const AccountSettings = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabDetails`, {
+        const response = await fetch(`${API_URL}/grabDetails`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -82,7 +83,7 @@ const AccountSettings = () => {
         body.password = formData.password;
       }
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/settings`, {
+      const response = await fetch(`${API_URL}/settings`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -103,7 +104,7 @@ const AccountSettings = () => {
       }, 3000);
 
       // Refetch the latest details after the update
-      const updatedResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabDetails`, {
+      const updatedResponse = await fetch(`${API_URL}/grabDetails`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

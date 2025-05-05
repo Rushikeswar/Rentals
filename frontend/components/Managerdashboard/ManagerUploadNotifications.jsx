@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 // import React, { useEffect, useState } from 'react';
 // import Carousel from '../Carousel.jsx';
 // import '../../css/Admindashboardcss/ManagerNotifications.css';
@@ -149,7 +150,7 @@ const ManagerUploadNotifications = () => {
 
     const fetchUnseenNotifications = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/manager/uploadnotifications`, {
+            const response = await fetch(`${API_URL}/manager/uploadnotifications`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include', // Assuming you're using cookies for session handling
@@ -174,7 +175,7 @@ const ManagerUploadNotifications = () => {
 
     const fetchProductDetails = async (productId) => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/manager/products/${productId}`, {
+            const response = await fetch(`${API_URL}/manager/products/${productId}`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -193,7 +194,7 @@ const ManagerUploadNotifications = () => {
 
     const markAsSeen = async (id, selectedProductId, isRejected) => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/manager/uploadnotifications/markAsSeen`, {
+            const response = await fetch(`${API_URL}/manager/uploadnotifications/markAsSeen`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

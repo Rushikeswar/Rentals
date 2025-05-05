@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import '../../css/Admindashboardcss/WelcomeAdmin.css';
 
@@ -8,7 +9,7 @@ const WelcomeAdmin = () => {
   useEffect(() => {
       const fetchAdmin = async () => {
           try {
-              const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabAdmin`, {
+              const response = await fetch(`${API_URL}/grabAdmin`, {
                   method: "GET",
                   headers: {
                       "Content-Type": "application/json"

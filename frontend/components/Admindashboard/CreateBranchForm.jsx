@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import { use } from 'framer-motion/m';
 import React, { useState } from 'react';
 
@@ -7,7 +8,7 @@ const BranchForm = () => {
     const handleSubmit =async (e) => {
         e.preventDefault();
         try{
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admindashboard/createbranch`, {
+        const response = await fetch(`${API_URL}/admindashboard/createbranch`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({branchname:branchName}),

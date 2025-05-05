@@ -1,3 +1,4 @@
+import { API_URL } from "../../src/config/api";
 // import React, { useState } from 'react';
 // import "../css/SearchBar.css"; // Ensure this path is correct based on your project structure
 
@@ -43,7 +44,7 @@ const SearchBar = ({ setsearchinput }) => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/autocomplete?query=${encodeURIComponent(input)}`,
+          `${API_URL}/autocomplete?query=${encodeURIComponent(input)}`,
           { credentials: 'include' }
         );
 

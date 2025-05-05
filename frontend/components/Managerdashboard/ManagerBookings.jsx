@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import { Line, Bar, Pie } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
@@ -15,7 +16,7 @@ const ManagerBookings = () => {
   useEffect(() => {
     const fetchLocation = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabBranch`, {
+        const response = await fetch(`${API_URL}/grabBranch`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -41,14 +42,14 @@ const ManagerBookings = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const dailyBookingsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/daily-bookings-cat`, {
+        const dailyBookingsRes = await fetch(`${API_URL}/api/dashboard/daily-bookings-cat`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
           },
           credentials: "include"
         });
-        const monthlyBookingsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/monthly-bookings-cat`, {
+        const monthlyBookingsRes = await fetch(`${API_URL}/api/dashboard/monthly-bookings-cat`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"

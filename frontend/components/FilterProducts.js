@@ -1,6 +1,7 @@
+import { API_URL } from "../../src/config/api";
 async function checkConflict(productId, fromDateTime, toDateTime) {
   try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/checkconflict`, {
+      const response = await fetch(`${API_URL}/checkconflict`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',

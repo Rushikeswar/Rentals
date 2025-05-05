@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 
@@ -11,7 +12,7 @@ const AdminCategory = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const categoriesRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/categories`);
+                const categoriesRes = await fetch(`${API_URL}/api/dashboard/categories`);
                 if (!categoriesRes.ok) {
                     throw new Error('Network response was not ok');
                 }

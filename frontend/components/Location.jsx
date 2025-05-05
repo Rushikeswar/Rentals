@@ -1,3 +1,4 @@
+import { API_URL } from "../../src/config/api";
 import React, { useState,useEffect } from 'react'
 import '../css/Location.css'
 function Location({setlocation}) {
@@ -10,7 +11,7 @@ function Location({setlocation}) {
     const[Locations,setLocations] = useState([]);
 
     useEffect(() => {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/locations`)
+      fetch(`${API_URL}/locations`)
           .then((response) => response.json())
           .then((data) => setLocations(data.locations))
           .catch((error) => console.error('Error fetching locations:', error));

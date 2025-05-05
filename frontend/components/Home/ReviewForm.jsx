@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useOnScreen } from './UseOnScreen'; // Import the custom hook
@@ -40,7 +41,7 @@ export const ReviewForm = ({ onSubmitSuccess }) => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/home/postreview`, {
+      const response = await fetch(`${API_URL}/home/postreview`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

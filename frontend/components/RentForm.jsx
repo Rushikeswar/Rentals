@@ -1,3 +1,4 @@
+import { API_URL } from "../../src/config/api";
 import React, { useState, useRef, useEffect } from 'react';
 import "../css/RentForm.css";
 import { useNavigate } from 'react-router-dom';
@@ -28,7 +29,7 @@ const RentForm = () => {
     const [minToDate, setMinToDate] = useState('');
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/locations`)
+        fetch(`${API_URL}/locations`)
             .then((response) => response.json())
             .then((data) => setLocations(data.locations))
             .catch((error) => console.error('Error fetching locations:', error));
@@ -186,7 +187,7 @@ const RentForm = () => {
         try {
             setmessage("");
             const base64Images = await Promise.all(images.map(image => convertToBase64(image))); // Convert images to base64
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/RentForm`, {
+            const response = await fetch(`${API_URL}/RentForm`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

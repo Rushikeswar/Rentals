@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import "../../css/Userdashboardcss/AccountProfile.css";
@@ -26,7 +27,7 @@ const AccountProfile = () => {
 
   const markAsSeen = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/notifications/markallAsSeen`, {
+      const response = await fetch(`${API_URL}/user/notifications/markallAsSeen`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -41,7 +42,7 @@ const AccountProfile = () => {
 
   const fetchUnseenNotifications = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/notifications`, {
+      const response = await fetch(`${API_URL}/user/notifications`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -66,7 +67,7 @@ const AccountProfile = () => {
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/signOut`, {
+      const response = await fetch(`${API_URL}/signOut`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

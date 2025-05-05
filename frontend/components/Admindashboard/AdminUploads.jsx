@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import { Line, Bar, Pie } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
@@ -11,8 +12,8 @@ const AdminUploads = () => {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      const dailyRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/daily-uploads`);
-      const monthlyRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/monthly-uploads`);
+      const dailyRes = await fetch(`${API_URL}/api/dashboard/daily-uploads`);
+      const monthlyRes = await fetch(`${API_URL}/api/dashboard/monthly-uploads`);
 
       if(!dailyRes.ok || !monthlyRes.ok){
         throw new Error('Network response was not ok');

@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import '../../css/Admindashboardcss/ManagersForm.css';
 
@@ -22,7 +23,7 @@ const Managers = () => {
   }, []);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/locations`)
+    fetch(`${API_URL}/locations`)
       .then((response) => response.json())
       .then((data) => setLocations(data.locations))
       .catch((error) => console.error('Error fetching locations:', error));
@@ -30,7 +31,7 @@ const Managers = () => {
 
   const fetchManagers = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admindashboard/registeredmanagers`, {
+      const response = await fetch(`${API_URL}/admindashboard/registeredmanagers`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -50,7 +51,7 @@ const Managers = () => {
 
   const handleDelete = async (id, forceDelete = false) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admindashboard/deletemanagers`, {
+      const response = await fetch(`${API_URL}/admindashboard/deletemanagers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ manager_id: id, forceDelete }),
@@ -125,7 +126,7 @@ const Managers = () => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admindashboard/createmanager`, {
+      const response = await fetch(`${API_URL}/admindashboard/createmanager`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

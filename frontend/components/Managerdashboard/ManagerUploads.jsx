@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import { Line, Bar, Pie } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
@@ -15,7 +16,7 @@ const ManagerUploads = () => {
   useEffect(() => {
     const fetchLocation = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabBranch`, {
+        const response = await fetch(`${API_URL}/grabBranch`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -40,14 +41,14 @@ const ManagerUploads = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const dailyRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/daily-uploads-cat`, {
+        const dailyRes = await fetch(`${API_URL}/api/dashboard/daily-uploads-cat`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
           },
           credentials: "include"
         });
-        const monthlyRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/monthly-uploads-cat`, {
+        const monthlyRes = await fetch(`${API_URL}/api/dashboard/monthly-uploads-cat`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"

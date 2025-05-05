@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState } from 'react';
 
 const AddLocation = () => {
@@ -7,7 +8,7 @@ const AddLocation = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/addBranch`, {
+      const response = await fetch(`${API_URL}/api/addBranch`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

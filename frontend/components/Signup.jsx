@@ -1,3 +1,4 @@
+import { API_URL } from "../../src/config/api";
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/SignupLogin.css';
@@ -120,7 +121,7 @@ const SignupForm = () => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
+      const response = await fetch(`${API_URL}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, dateofbirth, password }),

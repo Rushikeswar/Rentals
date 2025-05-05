@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useEffect, useState } from 'react';
 
 const ManagerDefault = () => {
@@ -7,7 +8,7 @@ const ManagerDefault = () => {
     useEffect(() => {
         const fetchManager = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabManager`, {
+                const response = await fetch(`${API_URL}/grabManager`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"

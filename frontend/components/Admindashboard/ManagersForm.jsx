@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 
 const ManagerForm = () => {
@@ -44,7 +45,7 @@ const ManagerForm = () => {
 
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}`/admindashboard/createmanager``, {
+            const response = await fetch(`${API_URL}`/admindashboard/createmanager``, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

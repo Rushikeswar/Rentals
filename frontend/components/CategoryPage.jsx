@@ -1,3 +1,4 @@
+import { API_URL } from "../../src/config/api";
 // import React, { useEffect, useState } from "react";
 // import { useParams } from "react-router-dom";
 // import "../css/CategoryPage.css";
@@ -87,7 +88,7 @@ export default function Category() {
   useEffect(() => {
     const fetchoriginalitems = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products`, {
+        const response = await fetch(`${API_URL}/products`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({productType:category}),

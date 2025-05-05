@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useState, useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 
@@ -14,7 +15,7 @@ const ManagerCategory = () => {
     useEffect(() => {
         const fetchLocation = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabBranch`, {
+                const response = await fetch(`${API_URL}/grabBranch`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
@@ -39,7 +40,7 @@ const ManagerCategory = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const categoriesRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/categories-cat`, {
+                const categoriesRes = await fetch(`${API_URL}/api/dashboard/categories-cat`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"

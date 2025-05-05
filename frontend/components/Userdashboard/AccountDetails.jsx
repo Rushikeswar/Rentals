@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useEffect, useState } from 'react'; 
 import "../../css/Userdashboardcss/AccountDetails.css";
 
@@ -9,7 +10,7 @@ const AccountDetails = () => {
   useEffect(() => {
     const fetchAccountDetails = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabDetails`, {
+        const response = await fetch(`${API_URL}/grabDetails`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"

@@ -1,3 +1,4 @@
+import { API_URL } from "../../../src/config/api";
 import React, { useEffect, useState } from 'react';
 import '../../css/Admindashboardcss/ManagerBookingNotifications.css';
 
@@ -31,7 +32,7 @@ const ManagerBookingNotifications = () => {
     const fetchBookingNotifications = async () => {
         try {
             const managerId = "66f6309bc8a9f2fc1a901f3a";
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/manager/fetchBookingnotifications`, {
+            const response = await fetch(`${API_URL}/manager/fetchBookingnotifications`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -59,7 +60,7 @@ const ManagerBookingNotifications = () => {
 
     const fetchLists = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/manager/bookingnotifications/results`, {
+            const response = await fetch(`${API_URL}/manager/bookingnotifications/results`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -80,7 +81,7 @@ const ManagerBookingNotifications = () => {
     const updateBookingLevel = async (bookingId, index,newLevel) => {
         try {
             console.log(bookingId,newLevel)
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/manager/bookingnotifications/updatelevel`, {
+            const response = await fetch(`${API_URL}/manager/bookingnotifications/updatelevel`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

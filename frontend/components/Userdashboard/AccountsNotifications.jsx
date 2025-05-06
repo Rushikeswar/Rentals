@@ -132,10 +132,6 @@ const AccountNotifications = () => {
                                             <p><strong>Booked To:</strong> {new Date(selectedBooking.toDateTime).toLocaleString()}</p>
                                         </div>
                                         <div>
-                                            <img
-                                                src={selectedProduct.photo[0]}
-                                                alt={selectedProduct.productName}
-                                            />
                                             <div
                                                 className={`mbn-user-bookingstatus ${selectedBooking.level === 0
                                                         ? 'booked'

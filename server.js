@@ -324,14 +324,6 @@ app.post('/RentForm', async (req, res) => {
     exist_user.rentals.push(savedProduct._id);
     await exist_user.save();
     const notifyupdate=await Manager.findOneAndUpdate({branch:savedProduct.locationName},{$push:{notifications:{message:savedProduct._id,seen:false}}},{new:true});
-    const redisKey = `products:${productType}`;
-let cached = await client.get(redisKey);
-
-if (cached) {
-  const productList = JSON.parse(cached);
-  productList.push(savedProduct); // assuming `savedProduct` is lean-compatible or transformed
-  await client.set(redisKey, JSON.stringify(productList), { EX: 3600 });
-}
 
     res.status(201).json({ errormessage: 'Uploaded successfully'});
   } catch (error) {
@@ -930,7 +922,10 @@ app.get("/grabBookings", async (req, res) => {
 
     // Fetch full documents from DB using IDs
     const bookings = await Booking.find({ _id: { $in: bookingIds } });
-    const products = await Product.find({ _id: { $in: productIds } });
+	const products = await Product.find(
+      { _id: { $in: productIds } },
+      { photo: 0 }  // exclude 'photo' field
+    );
 
     if (!bookings.length) {
       return res.status(404).json({ message: "No booking details found for this user" });
@@ -1073,9 +1068,9 @@ app.get("/grabDetails", async (req, res,next) => {
 //       res.status(400).json({ message: "No username cookie found" });
 //     }
 //   } catch (err) {
-//     res.status(500).json({ message: "An error occurred", error: err.message });
-//   }
-// });
+//     res.status(500).json({ message: "An error occurred", error: err.message })oductIds } },
+     
+    // });
 
 
 app.get("/grabRentals", async (req, res) => {
@@ -1109,7 +1104,7 @@ app.get("/grabRentals", async (req, res) => {
     }
 
     // Fetch the actual products from DB
-    const products = await Product.find({ _id: { $in: productIds }, expired: false });
+	const products = await Product.find({ _id: { $in: productIds }, expired: false },{photo:0});
 
     if (!products || products.length === 0) {
       return res.status(200).json({ message: "No rented products found" });

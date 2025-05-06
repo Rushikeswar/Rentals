@@ -53,12 +53,6 @@ const YourRentals = () => {
           {rentals.length > 0 ? (
             rentals.map((rental, index) => (
               <div key={index} className="profile-rental-card">
-                {rental.photo && rental.photo.length > 0 && (
-                  <img
-                    src={rental.photo[0]}
-                    alt={rental.productName}
-                  />
-                )}
                 <div className="profile-card-content">
                   <p><strong>Name:</strong> {rental.productName}</p>
                   <p><strong>Type:</strong> {rental.productType.toUpperCase()}</p>

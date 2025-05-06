@@ -63,12 +63,8 @@ const YourBookings = () => {
           {bookings.length > 0 ? (
             bookings.map((booking, index) => (
               <div key={index} className="profile-rental-card">
-                {booking.photo && booking.photo.length > 0 && (
+                {(
                   <div>
-                    <img
-                      src={booking.photo[0]}
-                      alt={booking.productName}
-                    />
                   <div
     className={`mbn-user-bookingstatus ${
         booking.level === 0

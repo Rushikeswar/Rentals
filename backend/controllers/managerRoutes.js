@@ -160,6 +160,20 @@ router.post('/uploadnotifications/markAsSeen', async (req, res) => {
         );
   
         // 🔥 Invalidate entire product cache
+
+		if (updatedProduct?.productType) {
+            const redisKey = `products:${updatedProduct.productType}`;
+            let cached = await client.get(redisKey);
+    
+            if (cached) {
+              console.log('🔄 Updating product type cache');
+              const productList = JSON.parse(cached);
+              productList.push(updatedProduct);
+              await client.set(redisKey, JSON.stringify(productList), { EX: 3600 });
+            }else{
+    await client.set(redisKey, JSON.stringify([updatedProduct]), { EX: 3600 });}
+          }
+
 		if (updatedProduct?.userid) {
         const userKey = `user:${updatedProduct.userid}:rentals`;
         const existing = await client.get(userKey);

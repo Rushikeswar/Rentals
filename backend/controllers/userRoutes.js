@@ -116,7 +116,10 @@ router.get('/notifications', async (req, res) => {
         const reqbooking = await Booking.findById(bookingid);
         if (!reqbooking) continue;
   
-        const reqproduct = await Product.findById(reqbooking.product_id);
+	const reqproduct = await Product.findById(
+        reqbooking.product_id,
+        { photo: 0 }  // exclude 'photo' field
+      );
         if (!reqproduct) continue;
   
         const reqbuyer = await User.findById(reqbooking.buyerid);

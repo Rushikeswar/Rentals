@@ -160,23 +160,23 @@ router.post('/uploadnotifications/markAsSeen', async (req, res) => {
         );
   
         // 🔥 Invalidate entire product cache
-        const keys = await client.keys('*');
-        const deletePromises = keys.map(key => client.del(key));
-        await Promise.all(deletePromises);
-  
-        console.log('🧹 Redis cache cleared');
-  
-        // ✅ Update rental cache for owner
-        if (updatedProduct?.userid) {
-          const userKey = `user:${updatedProduct.userid}:rentals`;
-          const existing = await client.get(userKey);
-          if (existing) {
-            const ids = JSON.parse(existing);
-            if (!ids.includes(updatedProduct._id.toString())) {
-              ids.push(updatedProduct._id.toString());
-              await client.set(userKey, JSON.stringify(ids));
-              console.log(`🧠 Updated Redis rental cache for user ${updatedProduct.userid}`);
-            }
+		if (updatedProduct?.userid) {
+        const userKey = `user:${updatedProduct.userid}:rentals`;
+        const existing = await client.get(userKey);
+
+        if (existing) {
+          const ids = JSON.parse(existing);
+          if (!ids.includes(updatedProduct._id.toString())) {
+            ids.push(updatedProduct._id.toString());
+
+            // ✅ Set TTL to 90 minutes (5400 seconds)
+            await client.set(userKey, JSON.stringify(ids), { EX: 5400 });
+            console.log(` Redis updated for user ${updatedProduct.userid}`);
+          }
+        } else {
+          // If cache was not present, create new entry
+          await client.set(userKey, JSON.stringify([updatedProduct._id.toString()]), { EX: 5400 });
+          console.log(` Redis created for user ${updatedProduct.userid}`);
           }
         }
       }

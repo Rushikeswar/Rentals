@@ -902,17 +902,17 @@ app.get("/grabBookings", async (req, res) => {
     }
 
     const cacheKey = `user_bookings_ids:${userId}`;
-    // const cached = await client.get(cacheKey);
+    const cached = await client.get(cacheKey);
 
     let bookingIds = [];
     let productIds = [];
 
-    // if (cached) {
-    //   console.log('✅ Serving Booking IDs from Redis cache');
-    //   const parsed = JSON.parse(cached);
-    //   bookingIds = parsed.bookingIds;
-    //   productIds = parsed.productIds;
-    // } else
+     if (cached) {
+       console.log('✅ Serving Booking IDs from Redis cache');
+       const parsed = JSON.parse(cached);
+       bookingIds = parsed.bookingIds;
+       productIds = parsed.productIds;
+     } else
      {
       console.log('💾 Fetching Booking/Product IDs from DB');
       const user = await User.findById(userId);
@@ -925,7 +925,7 @@ app.get("/grabBookings", async (req, res) => {
       productIds = bookings.map(b => b.product_id);
 
       // Save just the IDs to cache
-      // await client.set(cacheKey, JSON.stringify({ bookingIds, productIds }), { EX: 3600 });
+       await client.set(cacheKey, JSON.stringify({ bookingIds, productIds }), { EX: 3600 });
     }
 
     // Fetch full documents from DB using IDs
@@ -1087,25 +1087,25 @@ app.get("/grabRentals", async (req, res) => {
     const userid = req.cookies.user_id;
     const cacheKey = `user:${userid}:rentals`;
 
-    // // Try to get rental product IDs from Redis
-    // const cachedRentalIds = await client.get(cacheKey);
+     // Try to get rental product IDs from Redis
+         let productIds;
 
-    let productIds;
+	const cachedRentalIds = await client.get(cacheKey);
 
-    // if (cachedRentalIds) {
-    //   // Cache HIT
-    //   console.log("🔁 Rentals served from Redis");
-    //   productIds = JSON.parse(cachedRentalIds);
-    // } else
-     {
-      // Cache MISS: fetch from DB
+    if (cachedRentalIds) {
+      // 🔁 Redis cache HIT
+      productIds = JSON.parse(cachedRentalIds);
+      console.log("🔁 Rentals served from Redis");
+    } else {
+      // ❌ Cache MISS
       const user = await User.findById(userid);
       if (!user) return res.status(404).json({ message: "User not found" });
 
       productIds = user.rentals || [];
 
-      // Save rental product IDs in Redis
-      // await client.set(cacheKey, JSON.stringify(productIds), { EX: 3600 }); // cache for 1 hour
+      // ✅ Cache the rental product IDs for 90 minutes
+      await client.set(cacheKey, JSON.stringify(productIds), { EX: 5400 });
+      console.log("✅ Rentals cached in Redis");
     }
 
     // Fetch the actual products from DB

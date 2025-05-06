@@ -183,12 +183,12 @@ router.post('/uploadnotifications/markAsSeen', async (req, res) => {
             ids.push(updatedProduct._id.toString());
 
             // ✅ Set TTL to 90 minutes (5400 seconds)
-            await client.set(userKey, JSON.stringify(ids), { EX: 5400 });
+            await client.set(userKey, JSON.stringify(ids), { EX: 7200 });
             console.log(` Redis updated for user ${updatedProduct.userid}`);
           }
         } else {
           // If cache was not present, create new entry
-          await client.set(userKey, JSON.stringify([updatedProduct._id.toString()]), { EX: 5400 });
+          await client.set(userKey, JSON.stringify([updatedProduct._id.toString()]), { EX: 7200 });
           console.log(` Redis created for user ${updatedProduct.userid}`);
           }
         }

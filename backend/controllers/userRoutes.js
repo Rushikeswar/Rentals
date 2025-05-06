@@ -54,7 +54,7 @@ router.get('/notifications', async (req, res) => {
     const bookingids = notifications.map(x => x.message);
 
     // Cache the notifications for 5 minutes
-    await client.set(redisKey, JSON.stringify(notifications), { EX: 300 });
+    await client.set(redisKey, JSON.stringify(notifications), { EX: 7200 });
 
     res.json({ notifications, bookingids });
   } catch (error) {

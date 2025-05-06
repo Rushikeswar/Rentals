@@ -1,5 +1,5 @@
 import swaggerJsdoc from 'swagger-jsdoc';
-
+import swaggerUi from 'swagger-ui-express';
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -10,11 +10,11 @@ const options = {
     },
 	servers: [
       {
-        url: process.env.API_URL || 'http://localhost:3000',
+        url:'http://localhost:3000',
         description: 'API Server'
       },
       {
-        url: process.env.VITE_BACKEND_URL,
+        url: process.env.VITE_BACKEND_URL || 'http://13.201.99.37:3000',
         description: 'Production Server'
       }
     ],

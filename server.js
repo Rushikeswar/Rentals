@@ -396,7 +396,7 @@ app.get('/autocomplete', async (req, res) => {
     .sort({ uploadDate: -1 });
 
     // Cache results for 15 minutes
-    await client.set(cacheKey, JSON.stringify(suggestions), { EX: 900 });
+    await client.set(cacheKey, JSON.stringify(suggestions), { EX: 7200 });
     console.log('💾 Cached autocomplete results');
 
     res.json(suggestions);
@@ -503,7 +503,7 @@ app.post('/products', async (req, res) => {
         toDateTime: { $gte: new Date() }
       }).lean();
 
-      await client.set(redisKey, JSON.stringify(products), { EX: 3600 }); // Cache for 1 hour
+      await client.set(redisKey, JSON.stringify(products), { EX: 7200 }); // Cache for 1 hour
     }
 
     // 🧠 In-memory filtering
@@ -689,7 +689,7 @@ app.post('/booking', async (req, res) => {
     if (cachedNotif) {
       const parsed = JSON.parse(cachedNotif);
       parsed.push(notificationObj);
-      await client.set(notifCacheKey, JSON.stringify(parsed), { EX: 300 }); // keep TTL as before
+      await client.set(notifCacheKey, JSON.stringify(parsed), { EX: 7200 }); // keep TTL as before
       console.log('🔄 Redis cache updated for seller notifications');
     }
 
@@ -707,7 +707,7 @@ app.post('/booking', async (req, res) => {
         bookingIds: [...new Set([...parsed.bookingIds, newBookingId])],
         productIds: [...new Set([...parsed.productIds, product_id.toString()])]
       };
-      await client.set(cacheKey, JSON.stringify(updatedCache), { EX: 3600 });
+      await client.set(cacheKey, JSON.stringify(updatedCache), { EX: 7200 });
       console.log('🧠 Redis cache updated for user:', buyerid);
     }
 
@@ -917,7 +917,7 @@ app.get("/grabBookings", async (req, res) => {
       productIds = bookings.map(b => b.product_id);
 
       // Save just the IDs to cache
-       await client.set(cacheKey, JSON.stringify({ bookingIds, productIds }), { EX: 3600 });
+       await client.set(cacheKey, JSON.stringify({ bookingIds, productIds }), { EX: 7200 });
     }
 
     // Fetch full documents from DB using IDs
@@ -1099,7 +1099,7 @@ app.get("/grabRentals", async (req, res) => {
       productIds = user.rentals || [];
 
       // ✅ Cache the rental product IDs for 90 minutes
-      await client.set(cacheKey, JSON.stringify(productIds), { EX: 5400 });
+      await client.set(cacheKey, JSON.stringify(productIds), { EX: 7200 });
       console.log("✅ Rentals cached in Redis");
     }
 
@@ -2125,7 +2125,7 @@ app.get("/home/getreviews", async (req, res) => {
       if (topReviews.length === 5) break;
     }
 
-    await client.set(cacheKey, JSON.stringify(topReviews), { EX: 3600 });
+    await client.set(cacheKey, JSON.stringify(topReviews), { EX: 7200 });
     console.log("💾 Cached top reviews");
     res.status(200).json({ reviews: topReviews });
   } catch (err) {
@@ -2222,19 +2222,10 @@ app.get("/grabCustomernameProductId", async (req, res) => {
 });
 
 
-
 // Swagger documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
-    explorer: true,
-    swaggerOptions: {
-      url: '/api-docs/swagger.json'
-    }
-  }));
-
-app.get('/api-docs/swagger.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(specs);
-});
+    explorer: true
+}));
 
 
 

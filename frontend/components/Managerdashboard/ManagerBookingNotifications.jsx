@@ -8,7 +8,7 @@ const ManagerBookingNotifications = () => {
     const [list, setList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [managerid, setManagerid] = useState("");
     const [expandedRows, setExpandedRows] = useState({});
     const toggleRowDetails = (index) => {
         setExpandedRows((prevState) => ({
@@ -16,6 +16,31 @@ const ManagerBookingNotifications = () => {
             [index]: !prevState[index],
         }));
     };
+
+    useEffect(() => {
+        const fetchLocation = async () => {
+          try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/grabBranch`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              credentials: "include" // Include cookies with the request
+            });
+    
+            if (response.ok) {
+              const managerid = await response.json();
+              setManagerid(managerid); // Set the branch location state
+            } else {
+              setError("Failed to fetch Branch"); // Handle server errors
+            }
+          } catch (err) {
+            setError("An error occurred while fetching account details"); // Handle network errors
+          }
+        };
+    
+        fetchLocation();
+      }, []);
 
     // Fetch unseen notifications on component mount
     useEffect(() => {
@@ -31,7 +56,7 @@ const ManagerBookingNotifications = () => {
 
     const fetchBookingNotifications = async () => {
         try {
-            const managerId = "66f6309bc8a9f2fc1a901f3a";
+            const managerId = managerid;
             const response = await fetch(`${API_URL}/manager/fetchBookingnotifications`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

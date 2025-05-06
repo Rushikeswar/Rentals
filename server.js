@@ -2224,7 +2224,17 @@ app.get("/grabCustomernameProductId", async (req, res) => {
 
 
 // Swagger documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+    explorer: true,
+    swaggerOptions: {
+      url: '/api-docs/swagger.json'
+    }
+  }));
+
+app.get('/api-docs/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(specs);
+});
 
 
 

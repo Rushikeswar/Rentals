@@ -8,10 +8,14 @@ const options = {
       version: '1.0.0',
       description: 'Equipment Rental Management System API Documentation'
     },
-    servers: [
+	servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Development server'
+        url: process.env.API_URL || 'http://localhost:3000',
+        description: 'API Server'
+      },
+      {
+        url: process.env.VITE_BACKEND_URL,
+        description: 'Production Server'
       }
     ],
     components: {

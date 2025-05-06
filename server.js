@@ -58,7 +58,7 @@ connecttomongodb(MONGODB_URL)
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 const allowedOrigins = [
   FRONTEND_URL,
-  'http://52.66.241.102:5173', // EC2 public IP
+  'http://http://13.201.99.37:5173', // EC2 public IP
   'http://localhost:5173',     // Local development
 ];
 

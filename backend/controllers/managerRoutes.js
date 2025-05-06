@@ -48,7 +48,7 @@ router.post('/bookingnotifications/results', async (req, res) => {
                     }
 
                     const buyer = await User.findById(booking.buyerid);
-                    const product = await Product.findById(booking.product_id);
+                    const product = await Product.findById(booking.product_id,{photo:0});
                     const owner = await User.findById(product.userid);
 
                     return {
@@ -60,7 +60,6 @@ router.post('/bookingnotifications/results', async (req, res) => {
                         buyeremail: buyer?.email,
                         productid: product?._id,
                         productname: product?.productName,
-                        productphoto: product?.photo[0],
                         booking,
                     };
                 } catch (error) {

@@ -179,11 +179,6 @@ const ManagerBookingNotifications = () => {
                                 <tr>
                                     <td colSpan="4">
                                         <div className="mbn-details-container">
-                                            <img
-                                                src={item.productphoto}
-                                                alt={item.productname}
-                                                className="mbn-details-photo"
-                                            />
                                             <p><strong>Owner Email:</strong> {item.owneremail}</p>
                                             <p><strong>Buyer Email:</strong> {item.buyeremail}</p>
                                             <p>

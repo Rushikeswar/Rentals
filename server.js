@@ -764,7 +764,7 @@ app.post('/api/addBranch', async (req, res) => {
 
     res.status(201).json({ message: 'Location added successfully', locations: locationDoc.locations });
   } catch (error) {
-    res.status(500).json({ message: 'Error adding location', error });
+    res.status(500).json({ message: ' location', error });
   }
 });
 
